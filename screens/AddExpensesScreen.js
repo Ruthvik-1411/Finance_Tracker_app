@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, ScrollView } from "react-native";
-import { Dimensions, StyleSheet } from "react-native";
+import { View, Text, ScrollView, Dimensions, StyleSheet, Alert, ActivityIndicator } from "react-native";
 import { Card, TextInput } from "react-native-paper";
 import { Button } from "react-native-elements";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
@@ -20,8 +19,9 @@ const AddExpenseScreen = () => {
   const [notes, setNotes] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
-  const [selectedbin, setSelectedbin] = React.useState("Want"); //can be a date or final password
-  const [selectedTxtype, setSelectedTxtype] = React.useState("UPI"); //to handle password expiry
+  const [selectedbin, setSelectedbin] = React.useState("Want");
+  const [selectedTxtype, setSelectedTxtype] = React.useState("UPI");
+  const [loading, setLoading] = React.useState(false);
 
   const toggleModal = () => {
     setShowModal(!showModal);
@@ -45,8 +45,9 @@ const AddExpenseScreen = () => {
     setDate(currentDate); // Assign the selected Date object
   };
 
-  const handleSaveExpense = () => {
+  const handleAddExpense = () => {
     // Call your backend function here to save the expense
+    setLoading(true);
     if (amount !== "") {
       // saveExpense({ amount, category: selectedCategory });
       // navigation.goBack();
@@ -56,6 +57,7 @@ const AddExpenseScreen = () => {
   };
 
   const handleclr = () => {
+    setLoading(false);
     setDate(new Date());
     setAmount("");
     setDescription("");
@@ -73,6 +75,13 @@ const AddExpenseScreen = () => {
             <Text style={styles.entryTitle}>New Expense </Text>
             <Icon name="wallet-plus-outline" size={35} color="#000000" />
           </View>
+          <View style={[{ marginTop: 1, height: 40 }]}>
+            {loading && <ActivityIndicator size="large" color="#000000" />}
+          </View>
+          <View style={styles.hstack}>
+          <View
+            style={{width: 140, height: 60}}
+          ></View>
           <View
             style={{
               justifyContent: "center",
@@ -81,7 +90,6 @@ const AddExpenseScreen = () => {
             <Card
               style={{
                 width: 140,
-                //marginHorizontal: 200,
                 alignItems: "center",
                 elevation: 5,
               }}
@@ -110,6 +118,7 @@ const AddExpenseScreen = () => {
                 )}
               </View>
             </Card>
+          </View>
           </View>
           <View style={styles.inputContainer}>
             <TextInput
@@ -145,28 +154,17 @@ const AddExpenseScreen = () => {
               onChangeText={setNotes}
               mode="flat"
               maxLength={30}
-              style={styles.input}
+              style={styles.inputnotes}
               theme={{ colors: { primary: "#a9a9a9" } }}
             />
           </View>
-          <View>
-            <Card
-              style={{
-                width: 200,
-                marginHorizontal: 20,
-                marginVertical: 10,
-                alignItems: "center",
-                elevation: 5,
-                justifyContent: "center",
-                marginTop: 20,
-              }}
-            >
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                }}
-              >
+          <View style={{
+              justifyContent: "center",
+              alignItems: "center",
+              marginTop: 10,
+            }}>
+            <Card style={styles.categorycard}>
+              <View style={styles.hstack}>
                 <Text
                   style={{
                     alignItems: "center",
@@ -191,13 +189,7 @@ const AddExpenseScreen = () => {
               </View>
             </Card>
           </View>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
+          <View style={styles.hstack}>
             <View style={styles.dropdownContainer}>
               <Picker
                 selectedValue={selectedbin}
@@ -258,8 +250,9 @@ const AddExpenseScreen = () => {
               containerStyle={{
                 width: 150,
               }}
-              onPress={handleSaveExpense}
+              onPress={handleAddExpense}
             />
+            <View style={{width: 20}}></View>
           </View>
           <CategoryModal
             showModal={showModal}
@@ -288,6 +281,8 @@ const styles = StyleSheet.create({
   hstack: {
     flexDirection: "row",
     alignItems: "center",
+    // justifyContent: "center",
+    alignSelf: "center"
   },
   card: {
     width: windowWidth * 0.9,
@@ -319,22 +314,37 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   inputContainer: {
-    width: 250,
+    width: 270,
     height: 65,
+    alignSelf: "center"
   },
   input: {
     backgroundColor: "transparent",
     marginTop: 5,
-    fontSize: 14,
+    fontSize: 16,
   },
   inputdescription: {
     backgroundColor: "transparent",
     marginTop: 5,
-    fontSize: 14,
+    fontSize: 16,
     height: 80,
   },
-  dropdownContainer: {
+  inputnotes: {
+    backgroundColor: "transparent",
     marginTop: 15,
+    fontSize: 16,
+    height: 70,
+  },
+  categorycard:{
+    width: 200,
+    alignItems: "center",
+    elevation: 5,
+    justifyContent: "center",
+    marginTop: 25,
+    alignSelf: "center",
+  },
+  dropdownContainer: {
+    marginTop: 25,
   },
   dropdownbin: {
     width: 145,
