@@ -18,6 +18,7 @@ const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 const amountUsed = 6200;
 const budgetAmount = 10000;
+const budgetLeft = budgetAmount - amountUsed;
 const percentageUsed = (amountUsed / budgetAmount) * 100;
 
 const data = {
@@ -112,33 +113,61 @@ const TrackerScreen = () => {
           >
             <Card
               style={{
-                width: windowWidth * 0.7,
-                height: 70,
+                width: windowWidth * 0.8,
+                height: 90,
                 alignItems: "center",
                 elevation: 5,
+                padding: 5,
               }}
             >
+               <View style={styles.row}>
+          <Text style={styles.label}>Total Spent</Text>
+          <Text style={styles.label}>Total Budget</Text>
+          <Text style={styles.label}>Budget Left</Text>
+        </View>
+        {/* Text for Total Budget */}
+        <View style={styles.row}>
+        <Text style={styles.amount}>{`\u20B9${amountUsed}`}</Text>
+          <Text style={styles.amount}>{`\u20B9${budgetAmount}`}</Text>
+          <Text style={styles.amount}>{`\u20B9${budgetLeft}`}</Text>
+        </View>
+        <View style={{ flex: 1, width: "100%" }}>
               <Progress.Bar
                 progress={percentageUsed / 100}
-                width={200}
+                width={windowWidth * 0.7}
                 height={20}
                 color={"rgba(128,128,128,0.5)"}
-                borderColor={"grey"}
                 borderRadius={10}
-                useNativeDriver={true}
-                animationType={"timing"}
-              />
+                style={styles.progressBar}
+              >
+              </Progress.Bar>
+              <View
+          style={{
+            position: "absolute",
+            left: 10,
+            top: 12,
+          }}
+        >
+          <Text>{`${percentageUsed}%`}</Text>
+        </View>
+        <View
+          style={{
+            position: "absolute",
+            right: 10,
+            top: 12,
+          }}
+        >
+          <Text>{`${100 - percentageUsed}%`}</Text>
+        </View>
+              </View>
             </Card>
           </View>
-          <View
-            style={{
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <View
+          <View style={styles.chartContainer}>
+            <View 
               style={{
-                alignItems: "baseline",
+                position: "absolute",
+                left: 45,
+                top: 2,
               }}
             >
               <Text style={styles.chartTitle}>Analysis</Text>
@@ -156,7 +185,7 @@ const TrackerScreen = () => {
               // labelComponent={<VictoryLabel angle={45}/>}
               // labelRadius={({ innerRadius }) => innerRadius + 5 }
               padAngle={2}
-              innerRadius={40}
+              innerRadius={35}
               width={windowWidth}
               height={200}
               style={{
@@ -183,7 +212,15 @@ const TrackerScreen = () => {
             />
           </View>
           <View style={styles.chartContainer}>
-            <Text style={styles.chartTitle}>Trend</Text>
+          <View 
+              style={{
+                position: "absolute",
+                left: 45,
+                top: 25,
+              }}
+            >
+              <Text style={styles.chartTitle}>Trend</Text>
+            </View>
             <VictoryChart width={300} height={240}>
               {/* <VictoryAxis
                 dependentAxis
@@ -211,11 +248,11 @@ const TrackerScreen = () => {
                 barRatio={0.8}
                 cornerRadius={5}
                 barWidth={20}
-                labels={({ datum }) => datum.y}
+                labels={({ datum }) => `\u20B9${datum.y}`}
                 labelComponent={
                   <VictoryLabel
                     dy={-2}
-                    dx={12}
+                    dx={10}
                     style={{
                       tickLabels: { fontSize: 12 },
                     }}
@@ -280,14 +317,32 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginLeft: 10,
   },
-  chartContainer: {
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 5,
+  },
+  label: {
+    fontSize: 13,
+    fontWeight: 'bold',
+  },
+  amount: {
+    fontSize: 12,
     alignItems: "center",
-    marginVertical: -40,
+  },
+  progressBar: {
+    marginTop: 10,
+  },
+  chartContainer: {
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    top: 5,
+    bottom: 10,
   },
   chartTitle: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: "bold",
-    marginBottom: 0, // Add margin right for spacing between text and chart
   },
   inputContainer: {
     width: 250,
