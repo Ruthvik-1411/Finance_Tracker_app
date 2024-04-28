@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import { View, Text, ScrollView, Dimensions, StyleSheet, Alert, ActivityIndicator } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  Dimensions,
+  StyleSheet,
+  Alert,
+  ActivityIndicator,
+} from "react-native";
 import { Card, TextInput } from "react-native-paper";
 import { Button } from "react-native-elements";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
@@ -79,46 +87,46 @@ const AddExpenseScreen = () => {
             {loading && <ActivityIndicator size="large" color="#000000" />}
           </View>
           <View style={styles.hstack}>
-          <View
-            style={{width: 140, height: 60}}
-          ></View>
-          <View
-            style={{
-              justifyContent: "center",
-            }}
-          >
-            <Card
+            <View style={{ width: 140, height: 60 }}></View>
+            <View
               style={{
-                width: 140,
-                alignItems: "center",
-                elevation: 5,
+                justifyContent: "center",
               }}
             >
-              <View
+              <Card
                 style={{
-                  flexDirection: "row",
+                  width: 140,
                   alignItems: "center",
+                  elevation: 5,
                 }}
               >
-                <Text>{formatDate(date).toString()}</Text>
-                <Button
-                  onPress={() => setShowDatePicker(true)}
-                  icon={<Icon name="chevron-down" size={25} color={"black"} />}
-                  type="clear"
-                />
-                {showDatePicker && (
-                  <DateTimePicker
-                    testID="dateTimePicker"
-                    value={date}
-                    mode={"date"}
-                    is24Hour={true}
-                    display="default"
-                    onChange={onChange}
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                  }}
+                >
+                  <Text>{formatDate(date).toString()}</Text>
+                  <Button
+                    onPress={() => setShowDatePicker(true)}
+                    icon={
+                      <Icon name="chevron-down" size={25} color={"black"} />
+                    }
+                    type="clear"
                   />
-                )}
-              </View>
-            </Card>
-          </View>
+                  {showDatePicker && (
+                    <DateTimePicker
+                      testID="dateTimePicker"
+                      value={date}
+                      mode={"date"}
+                      is24Hour={true}
+                      display="default"
+                      onChange={onChange}
+                    />
+                  )}
+                </View>
+              </Card>
+            </View>
           </View>
           <View style={styles.inputContainer}>
             <TextInput
@@ -158,11 +166,13 @@ const AddExpenseScreen = () => {
               theme={{ colors: { primary: "#a9a9a9" } }}
             />
           </View>
-          <View style={{
+          <View
+            style={{
               justifyContent: "center",
               alignItems: "center",
               marginTop: 10,
-            }}>
+            }}
+          >
             <Card style={styles.categorycard}>
               <View style={styles.hstack}>
                 <Text
@@ -252,7 +262,7 @@ const AddExpenseScreen = () => {
               }}
               onPress={handleAddExpense}
             />
-            <View style={{width: 20}}></View>
+            <View style={{ width: 20 }}></View>
           </View>
           <CategoryModal
             showModal={showModal}
@@ -282,7 +292,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     // justifyContent: "center",
-    alignSelf: "center"
+    alignSelf: "center",
   },
   card: {
     width: windowWidth * 0.9,
@@ -316,7 +326,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     width: 270,
     height: 65,
-    alignSelf: "center"
+    alignSelf: "center",
   },
   input: {
     backgroundColor: "transparent",
@@ -335,7 +345,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     height: 70,
   },
-  categorycard:{
+  categorycard: {
     width: 200,
     alignItems: "center",
     elevation: 5,

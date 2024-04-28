@@ -19,11 +19,11 @@ const CustomTabBarButton = ({ children, onPress, ...props }) => (
     onPress={onPress}>
     <View
       style={{
-        width: 60,
-        height: 60,
-        borderRadius: 35,
-        backgroundColor: props.focused ? '#0f0f0f' : '#0f0f0f',
-        // backgroundColor: '#000000',
+        width: 39,
+        height: 39,
+        borderRadius: 5,
+        backgroundColor: props.focused ? 'rgba(128,128,128,1)' : 'rgba(128,128,128,0.8)',
+        transform: [{ rotate: '45deg' }],
       }}>
       {children}
     </View>
@@ -33,14 +33,11 @@ const CustomTabBarButton = ({ children, onPress, ...props }) => (
 const Tabs = () => {
   return (
     <Tab.Navigator
-      // tabBarOptions={{
-      //   showLabel: false,
-      // }}
       initialRouteName="Add"
       screenOptions={({ route }) => ({
-        "tabBarShowLabel": false,
+        "tabBarShowLabel": true, // defaults to true
         "tabBarStyle": [{
-            "display": "flex"
+            "display": "flex",
           },
         null
         ],
@@ -48,21 +45,21 @@ const Tabs = () => {
           let iconName;
 
           if (route.name === 'Add') {
-            iconName = focused ? 'plus' : 'plus';
-            size=55;
+            iconName = focused ? 'close' : 'close';
+            size=35;
             color = focused ? '#ffffff' : '#f0f0f0';
-          } else if (route.name === 'Tracker') {
+          } else if (route.name === 'Summary') {
             iconName = focused ? 'chart-arc' : 'chart-arc';
-            size=30;
+            size=25;
           } else if (route.name === 'Cards') {
             iconName = focused ? 'credit-card-settings' : 'credit-card-settings-outline';
-            size=30;
-          } else if (route.name === 'Stocks') {
+            size=25;
+          } else if (route.name === 'Investments') {
             iconName = focused ? 'finance' : 'finance';
-            size=30;
-          } else if (route.name === 'Bank') {
+            size=25;
+          } else if (route.name === 'Banking') {
             iconName = focused ? 'bank' : 'bank-outline';
-            size=30;
+            size=25;
           }
           return <Icon name={iconName} size={size} color={color} />;
         },
@@ -70,7 +67,7 @@ const Tabs = () => {
         tabBarInactiveTintColor: 'gray',
       })}>
       <Tab.Screen
-        name="Bank"
+        name="Banking"
         component={BankingScreen}
         options={{ headerShown: false }}
       />
@@ -84,16 +81,17 @@ const Tabs = () => {
         component={AddExpensesScreen}
         options={{
           headerShown: false,
+          tabBarLabel: '', 
           tabBarButton: (props) => <CustomTabBarButton {...props} focused={true} />,
         }}
       />
       <Tab.Screen
-        name="Tracker"
+        name="Summary"
         component={TrackerScreen}
         options={{ headerShown: false }}
       />
       <Tab.Screen
-        name="Stocks"
+        name="Investments"
         component={InvestmentsScreen}
         options={{ headerShown: false }}
       />
