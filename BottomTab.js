@@ -19,8 +19,8 @@ const CustomTabBarButton = ({ children, onPress, ...props }) => (
     onPress={onPress}>
     <View
       style={{
-        width: 40,
-        height: 40,
+        width: 39,
+        height: 39,
         borderRadius: 5,
         backgroundColor: props.focused ? 'rgba(128,128,128,1)' : 'rgba(128,128,128,0.8)',
         transform: [{ rotate: '45deg' }],
