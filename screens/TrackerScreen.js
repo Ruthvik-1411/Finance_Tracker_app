@@ -16,24 +16,26 @@ import {
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
-const amountUsed = 6200;
-const budgetAmount = 10000;
-const budgetLeft = budgetAmount - amountUsed;
-const percentageUsed = (amountUsed / budgetAmount) * 100;
-
-const data = {
-  labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
-  datasets: [
-    {
-      data: [6813, 5200, 2000, 7240, 5568, 9000],
-    },
-  ],
-};
 
 const TrackerScreen = () => {
   const [showDatePicker, setShowDatePicker] = React.useState(false);
   const [date, setDate] = React.useState(new Date());
   const [endAngle, setEndAngle] = useState(0);
+
+  const amountUsed = 6200;
+  const budgetAmount = 10000;
+  const budgetLeft = budgetAmount - amountUsed;
+  const percentageUsed = (amountUsed / budgetAmount) * 100;
+
+  const data = {
+    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+    datasets: [
+      {
+        data: [6813, 5200, 2000, 7240, 5568, 9000],
+      },
+    ],
+  };
+
 
   const formatDate = (date) => {
     const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -44,7 +46,7 @@ const TrackerScreen = () => {
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
     setShowDatePicker(false);
-    setDate(currentDate); // Assign the selected Date object
+    setDate(currentDate);
   };
 
   useEffect(() => {
@@ -120,50 +122,48 @@ const TrackerScreen = () => {
                 padding: 5,
               }}
             >
-               <View style={styles.row}>
-          <Text style={styles.label}>Total Spent</Text>
-          <Text style={styles.label}>Total Budget</Text>
-          <Text style={styles.label}>Budget Left</Text>
-        </View>
-        {/* Text for Total Budget */}
-        <View style={styles.row}>
-        <Text style={styles.amount}>{`\u20B9${amountUsed}`}</Text>
-          <Text style={styles.amount}>{`\u20B9${budgetAmount}`}</Text>
-          <Text style={styles.amount}>{`\u20B9${budgetLeft}`}</Text>
-        </View>
-        <View style={{ flex: 1, width: "100%" }}>
-              <Progress.Bar
-                progress={percentageUsed / 100}
-                width={windowWidth * 0.7}
-                height={20}
-                color={"rgba(128,128,128,0.5)"}
-                borderRadius={10}
-                style={styles.progressBar}
-              >
-              </Progress.Bar>
-              <View
-          style={{
-            position: "absolute",
-            left: 10,
-            top: 12,
-          }}
-        >
-          <Text>{`${percentageUsed}%`}</Text>
-        </View>
-        <View
-          style={{
-            position: "absolute",
-            right: 10,
-            top: 12,
-          }}
-        >
-          <Text>{`${100 - percentageUsed}%`}</Text>
-        </View>
+              <View style={styles.row}>
+                <Text style={styles.label}>Total Spent</Text>
+                <Text style={styles.label}>Total Budget</Text>
+                <Text style={styles.label}>Budget Left</Text>
+              </View>
+              <View style={styles.row}>
+                <Text style={styles.amount}>{`\u20B9${amountUsed}`}</Text>
+                <Text style={styles.amount}>{`\u20B9${budgetAmount}`}</Text>
+                <Text style={styles.amount}>{`\u20B9${budgetLeft}`}</Text>
+              </View>
+              <View style={{ flex: 1, width: "100%" }}>
+                <Progress.Bar
+                  progress={percentageUsed / 100}
+                  width={windowWidth * 0.7}
+                  height={20}
+                  color={"rgba(128,128,128,0.5)"}
+                  borderRadius={10}
+                  style={styles.progressBar}
+                ></Progress.Bar>
+                <View
+                  style={{
+                    position: "absolute",
+                    left: 10,
+                    top: 12,
+                  }}
+                >
+                  <Text>{`${percentageUsed}%`}</Text>
+                </View>
+                <View
+                  style={{
+                    position: "absolute",
+                    right: 10,
+                    top: 12,
+                  }}
+                >
+                  <Text>{`${100 - percentageUsed}%`}</Text>
+                </View>
               </View>
             </Card>
           </View>
           <View style={styles.chartContainer}>
-            <View 
+            <View
               style={{
                 position: "absolute",
                 left: 45,
@@ -182,8 +182,6 @@ const TrackerScreen = () => {
               endAngle={endAngle}
               labels={({ datum }) => `${datum.x}: \n \u20B9${datum.y}`}
               labelPosition={"centroid"}
-              // labelComponent={<VictoryLabel angle={45}/>}
-              // labelRadius={({ innerRadius }) => innerRadius + 5 }
               padAngle={2}
               innerRadius={35}
               width={windowWidth}
@@ -212,7 +210,7 @@ const TrackerScreen = () => {
             />
           </View>
           <View style={styles.chartContainer}>
-          <View 
+            <View
               style={{
                 position: "absolute",
                 left: 45,
@@ -222,15 +220,6 @@ const TrackerScreen = () => {
               <Text style={styles.chartTitle}>Trend</Text>
             </View>
             <VictoryChart width={300} height={240}>
-              {/* <VictoryAxis
-                dependentAxis
-                tickFormat={(x) => `\u20B9${x}`}
-                style={{
-                  tickLabels: { fontSize: 10, padding: 5 },
-                  axis: { stroke: "none" }, // Hide axis line
-                  grid: { stroke: "none" }, // Hide grid lines
-                }}
-              /> */}
               <VictoryAxis
                 tickValues={data.labels}
                 style={{
@@ -303,7 +292,6 @@ const styles = StyleSheet.create({
   hstack: {
     flexDirection: "row",
     alignItems: "center",
-    // justifyContent: "center",
     alignSelf: "center",
   },
   entryContainer: {
@@ -318,13 +306,13 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginBottom: 5,
   },
   label: {
     fontSize: 13,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   amount: {
     fontSize: 12,
@@ -338,7 +326,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     top: 5,
-    bottom: 10,
+    marginBottom: -10,
   },
   chartTitle: {
     fontSize: 18,
