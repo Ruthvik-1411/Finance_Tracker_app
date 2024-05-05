@@ -36,7 +36,6 @@ const TrackerScreen = () => {
     ],
   };
 
-
   const formatDate = (date) => {
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const year = date.getFullYear();
@@ -113,15 +112,7 @@ const TrackerScreen = () => {
               alignItems: "center",
             }}
           >
-            <Card
-              style={{
-                width: windowWidth * 0.8,
-                height: 90,
-                alignItems: "center",
-                elevation: 5,
-                padding: 5,
-              }}
-            >
+            <Card style={styles.valuecard}>
               <View style={styles.row}>
                 <Text style={styles.label}>Total Spent</Text>
                 <Text style={styles.label}>Total Budget</Text>
@@ -304,6 +295,13 @@ const styles = StyleSheet.create({
     fontSize: 25,
     fontWeight: "bold",
     marginLeft: 10,
+  },
+  valuecard: {
+    width: windowWidth * 0.8,
+    height: 90,
+    alignItems: "center",
+    elevation: 5,
+    padding: 5,
   },
   row: {
     flexDirection: "row",
