@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, Dimensions, StyleSheet, ScrollView } from "react-native";
+import { View, Text, Dimensions, FlatList, StyleSheet } from "react-native";
 import { Card } from "react-native-paper";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { VictoryPie, LineSegment } from "victory-native";
@@ -30,148 +30,153 @@ const InvestmentsScreen = () => {
     return () => clearInterval(animationInterval);
   }, []);
 
+  const holdingdata = [
+    { name: "BEL", qty: 10, cost: 1138.32, delta: 127.35 },
+    { name: "HDFCBANK", qty: 5, cost: 8238.51, delta: -11.02 },
+    { name: "BHARTIARTL", qty: 2, cost: 1381.1, delta: 95.17 },
+    { name: "WIPRO", qty: 2, cost: 852.98, delta: 8.46 },
+    { name: "ONGC", qty: 10, cost: 1138.32, delta: 127.35 },
+    { name: "M&M", qty: 5, cost: 8238.51, delta: -11.02 },
+    { name: "HCLTECH", qty: 6, cost: 1381.1, delta: 85.17 },
+    { name: "TATASTEEL", qty: 20, cost: 852.98, delta: 88.46 },
+    { name: "NTPC", qty: 5, cost: 852.98, delta: 108.46 },
+    { name: "ITC", qty: 10, cost: 1381.1, delta: 95.17 },
+    { name: "HINDUNILVR", qty: 12, cost: 852.98, delta: 15.46 },
+    { name: "COALINDIA", qty: 2, cost: 2352.7, delta: 12.6 },
+  ];
+
+  const formatCost = (cost) => {
+    return (cost / 1000).toFixed(2) + "k";
+  };
+
+  const CustomCard = ({ name, qty, cost, delta }) => (
+    <Card style={styles.minicard}>
+      <View style={styles.vstack}>
+        <View style={styles.holdingpropcontainer}>
+          <Text style={styles.nameText}>{name}</Text>
+          <View style={styles.qtyContainer}>
+            <Icon name="briefcase" size={14} />
+            <Text style={styles.qtyText}>{qty}</Text>
+          </View>
+        </View>
+        <View style={styles.holdingpropcontainer}>
+          <Text style={styles.costText}>{`\u20B9${formatCost(cost)}`}</Text>
+          <Text
+            style={[styles.deltaText, { color: delta >= 0 ? "green" : "red" }]}
+          >
+            ({delta >= 0 ? `+${delta.toFixed(0)}` : delta.toFixed(0)}%)
+          </Text>
+        </View>
+      </View>
+    </Card>
+  );
+
   return (
     <View style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        <Card style={styles.card}>
-          <View style={styles.entryContainer}>
-            <Text style={styles.entryTitle}>Investments</Text>
-            <Icon name="finance" size={35} color="#000000" />
-          </View>
-          <View
-            style={{
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <Card style={styles.valuecard}>
-              <View>
-                <View style={styles.hstack}>
-                  <View style={styles.vstack}>
-                    <Text style={styles.label}>Invested Value</Text>
-                    <Text
-                      style={styles.amount}
-                    >{`\u20B9${InvestedValue}`}</Text>
-                  </View>
-                  <View style={{ width: 45 }}></View>
-                  <View style={styles.vstack}>
-                    <Text style={styles.label}>Current Value</Text>
-                    <Text style={styles.amount}>{`\u20B9${CurrentValue}`}</Text>
-                  </View>
+      <Card style={styles.card}>
+        <View style={styles.entryContainer}>
+          <Text style={styles.entryTitle}>Investments</Text>
+          <Icon name="finance" size={35} color="#000000" />
+        </View>
+        <View
+          style={{
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Card style={styles.valuecard}>
+            <View>
+              <View style={styles.hstack}>
+                <View style={styles.vstack}>
+                  <Text style={styles.label}>Invested Value</Text>
+                  <Text style={styles.amount}>{`\u20B9${InvestedValue}`}</Text>
                 </View>
-                <View style={styles.hstack}>
-                  <View style={styles.vstack}>
-                    <Text style={styles.label}>Realized Profit</Text>
-                    <Text
-                      style={styles.amount}
-                    >{`\u20B9${RealizedProfit}`}</Text>
-                  </View>
-                  <View style={{ width: 40 }}></View>
-                  <View style={styles.vstack}>
-                    <Text style={styles.label}>Unrealized Profit</Text>
-                    <Text
-                      style={[
-                        styles.amount,
-                        unrealizedProfit >= 0
-                          ? styles.greenText
-                          : styles.redText,
-                      ]}
-                    >{`\u20B9${unrealizedProfit}`}</Text>
-                  </View>
+                <View style={{ width: 45 }}></View>
+                <View style={styles.vstack}>
+                  <Text style={styles.label}>Current Value</Text>
+                  <Text style={styles.amount}>{`\u20B9${CurrentValue}`}</Text>
                 </View>
               </View>
-            </Card>
-          </View>
-          <View style={styles.chartContainer}>
-            <View
-              style={{
-                position: "absolute",
-                left: 45,
-                top: 2,
-              }}
-            >
-              <Text style={styles.chartTitle}>Stocks</Text>
+              <View style={styles.hstack}>
+                <View style={styles.vstack}>
+                  <Text style={styles.label}>Realized Profit</Text>
+                  <Text style={styles.amount}>{`\u20B9${RealizedProfit}`}</Text>
+                </View>
+                <View style={{ width: 40 }}></View>
+                <View style={styles.vstack}>
+                  <Text style={styles.label}>Unrealized Profit</Text>
+                  <Text
+                    style={[
+                      styles.amount,
+                      unrealizedProfit >= 0 ? styles.greenText : styles.redText,
+                    ]}
+                  >{`\u20B9${unrealizedProfit}`}</Text>
+                </View>
+              </View>
             </View>
-            <VictoryPie
-              data={stockdata.data}
-              endAngle={endAngle}
-              labels={({ datum }) => `${datum.x}: \n \u20B9${datum.y}`}
-              labelPosition={"centroid"}
-              padAngle={2}
-              innerRadius={35}
-              width={windowWidth}
-              height={200}
-              style={{
-                data: {
-                  fillOpacity: 0.9,
-                  stroke: "#ffffff",
-                  strokeWidth: 1,
-                },
-                labels: {
-                  fontSize: 13,
-                  fill: "#000000",
-                },
-              }}
-              labelIndicator={
-                <LineSegment
-                  style={{
-                    stroke: "black",
-                    fill: "black",
-                    strokeLinecap: "round",
-                  }}
+          </Card>
+        </View>
+        <View style={styles.chartContainer}>
+          <View
+            style={{
+              position: "absolute",
+              left: 45,
+              top: 2,
+            }}
+          >
+            <Text style={styles.chartTitle}>Stocks</Text>
+          </View>
+          <VictoryPie
+            data={stockdata.data}
+            endAngle={endAngle}
+            labels={({ datum }) => `${datum.x}: \n \u20B9${datum.y}`}
+            labelPosition={"centroid"}
+            padAngle={2}
+            innerRadius={35}
+            width={windowWidth}
+            height={200}
+            style={{
+              data: {
+                fillOpacity: 0.9,
+                stroke: "#ffffff",
+                strokeWidth: 1,
+              },
+              labels: {
+                fontSize: 13,
+                fill: "#000000",
+              },
+            }}
+            labelIndicator={
+              <LineSegment
+                style={{
+                  stroke: "black",
+                  fill: "black",
+                  strokeLinecap: "round",
+                }}
+              />
+            }
+            labelIndicatorInnerOffset={2}
+          />
+        </View>
+        <View>
+          <View>
+            <FlatList
+              data={holdingdata}
+              renderItem={({ item }) => (
+                <CustomCard
+                  name={item.name}
+                  qty={item.qty}
+                  cost={item.cost}
+                  delta={item.delta}
                 />
-              }
-              labelIndicatorInnerOffset={2}
+              )}
+              keyExtractor={(item, index) => index.toString()}
+              numColumns={3}
+              columnWrapperStyle={styles.column}
             />
           </View>
-          <View>
-            <View style={styles.row}>
-              <Card style={styles.minicard}>
-                <Text>Card 1</Text>
-              </Card>
-              <Card style={styles.minicard}>
-                <Text>Card 2</Text>
-              </Card>
-              <Card style={styles.minicard}>
-                <Text>Card 3</Text>
-              </Card>
-            </View>
-            <View style={styles.row}>
-              <Card style={styles.minicard}>
-                <Text>Card 4</Text>
-              </Card>
-              <Card style={styles.minicard}>
-                <Text>Card 5</Text>
-              </Card>
-              <Card style={styles.minicard}>
-                <Text>Card 6</Text>
-              </Card>
-            </View>
-            <View style={styles.row}>
-              <Card style={styles.minicard}>
-                <Text>Card 7</Text>
-              </Card>
-              <Card style={styles.minicard}>
-                <Text>Card 8</Text>
-              </Card>
-              <Card style={styles.minicard}>
-                <Text>Card 9</Text>
-              </Card>
-            </View>
-            <View style={styles.row}>
-              <Card style={styles.minicard}>
-                <Text>Card 10</Text>
-              </Card>
-              <Card style={styles.minicard}>
-                <Text>Card 11</Text>
-              </Card>
-              <Card style={styles.minicard}>
-                <Text>Card 12</Text>
-              </Card>
-            </View>
-          </View>
-        </Card>
-      </ScrollView>
+        </View>
+      </Card>
     </View>
   );
 };
@@ -183,11 +188,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: "#ffffff",
     paddingBottom: 10,
-  },
-  scrollContent: {
-    flexGrow: 1,
-    alignItems: "center",
-    justifyContent: "center",
   },
   card: {
     width: windowWidth * 0.9,
@@ -269,11 +269,43 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   minicard: {
-    width: windowWidth * 0.24,
-    height: 40,
+    width: windowWidth * 0.25,
+    height: 50,
     alignItems: "center",
     elevation: 5,
     padding: 5,
+  },
+  holdingpropcontainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    alignSelf: "center",
+    marginBottom: 4,
+  },
+  nameText: {
+    fontSize: 12,
+    fontWeight: "bold",
+    flex: 1,
+    flexWrap: "wrap",
+  },
+  qtyContainer: {
+    marginLeft: 2,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  qtyText: {
+    marginLeft: 2,
+    fontSize: 10,
+  },
+  costText: {
+    fontSize: 12,
+  },
+  deltaText: {
+    fontSize: 12,
+    fontWeight: "bold",
+  },
+  column: {
+    justifyContent: "space-evenly",
+    marginBottom: 10,
   },
 });
 
