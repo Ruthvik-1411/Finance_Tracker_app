@@ -1,25 +1,182 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
-import { Dimensions, StyleSheet } from 'react-native';
-import { Card, TextInput } from 'react-native-paper';
+import React, { useState, useEffect } from "react";
+import { View, Text, Dimensions, FlatList, StyleSheet } from "react-native";
+import { Card } from "react-native-paper";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { VictoryPie, LineSegment } from "victory-native";
 
-const windowWidth = Dimensions.get('window').width;
-const windowHeight = Dimensions.get('window').height;
+const windowWidth = Dimensions.get("window").width;
+const windowHeight = Dimensions.get("window").height;
 
 const InvestmentsScreen = () => {
-  const [amount, setAmount] = useState('');
+  const [InvestedValue, setInvestedValue] = useState(19888.06);
+  const [CurrentValue, setCurrentValue] = useState(23710.5);
+  const [RealizedProfit, setRealizedProfit] = useState(501.82);
+  const unrealizedProfit = (CurrentValue - InvestedValue).toFixed(2);
+  const [endAngle, setEndAngle] = useState(0);
+
+  const stockdata = {
+    data: [
+      { x: "Hobbies", y: 350 },
+      { x: "Entertainment", y: 400 },
+      { x: "Travel", y: 550 },
+      { x: "Food", y: 800 },
+    ],
+  };
+  useEffect(() => {
+    const animationInterval = setInterval(() => {
+      setEndAngle((endAngle) => endAngle + 180);
+    }, 2);
+
+    return () => clearInterval(animationInterval);
+  }, []);
+
+  const holdingdata = [
+    { name: "BEL", qty: 10, cost: 1138.32, delta: 127.35 },
+    { name: "HDFCBANK", qty: 5, cost: 8238.51, delta: -11.02 },
+    { name: "BHARTIARTL", qty: 2, cost: 1381.1, delta: 95.17 },
+    { name: "WIPRO", qty: 2, cost: 852.98, delta: 8.46 },
+    { name: "ONGC", qty: 10, cost: 1138.32, delta: 127.35 },
+    { name: "M&M", qty: 5, cost: 8238.51, delta: -11.02 },
+    { name: "HCLTECH", qty: 6, cost: 1381.1, delta: 85.17 },
+    { name: "TATASTEEL", qty: 20, cost: 852.98, delta: 88.46 },
+    { name: "NTPC", qty: 5, cost: 852.98, delta: 108.46 },
+    { name: "ITC", qty: 10, cost: 1381.1, delta: 95.17 },
+    { name: "HINDUNILVR", qty: 12, cost: 852.98, delta: 15.46 },
+    { name: "COALINDIA", qty: 2, cost: 2352.7, delta: 12.6 },
+  ];
+
+  const formatCost = (cost) => {
+    return (cost / 1000).toFixed(2) + "k";
+  };
+
+  const CustomCard = ({ name, qty, cost, delta }) => (
+    <Card style={styles.minicard}>
+      <View style={styles.vstack}>
+        <View style={styles.holdingpropcontainer}>
+          <Text style={styles.nameText}>{name}</Text>
+          <View style={styles.qtyContainer}>
+            <Icon name="briefcase" size={14} />
+            <Text style={styles.qtyText}>{qty}</Text>
+          </View>
+        </View>
+        <View style={styles.holdingpropcontainer}>
+          <Text style={styles.costText}>{`\u20B9${formatCost(cost)}`}</Text>
+          <Text
+            style={[styles.deltaText, { color: delta >= 0 ? "green" : "red" }]}
+          >
+            ({delta >= 0 ? `+${delta.toFixed(0)}` : delta.toFixed(0)}%)
+          </Text>
+        </View>
+      </View>
+    </Card>
+  );
 
   return (
     <View style={styles.container}>
-    <ScrollView contentContainerStyle={styles.scrollContent}>
       <Card style={styles.card}>
-          <View style={styles.inputContainer}>
-          <View>
-          <Text>Investments screen</Text>
+        <View style={styles.entryContainer}>
+          <Text style={styles.entryTitle}>Investments</Text>
+          <Icon name="finance" size={35} color="#000000" />
         </View>
+        <View
+          style={{
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Card style={styles.valuecard}>
+            <View>
+              <View style={styles.hstack}>
+                <View style={styles.vstack}>
+                  <Text style={styles.label}>Invested Value</Text>
+                  <Text style={styles.amount}>{`\u20B9${InvestedValue}`}</Text>
+                </View>
+                <View style={{ width: 45 }}></View>
+                <View style={styles.vstack}>
+                  <Text style={styles.label}>Current Value</Text>
+                  <Text style={styles.amount}>{`\u20B9${CurrentValue}`}</Text>
+                </View>
+              </View>
+              <View style={styles.hstack}>
+                <View style={styles.vstack}>
+                  <Text style={styles.label}>Realized Profit</Text>
+                  <Text style={styles.amount}>{`\u20B9${RealizedProfit}`}</Text>
+                </View>
+                <View style={{ width: 40 }}></View>
+                <View style={styles.vstack}>
+                  <Text style={styles.label}>Unrealized Profit</Text>
+                  <Text
+                    style={[
+                      styles.amount,
+                      unrealizedProfit >= 0 ? styles.greenText : styles.redText,
+                    ]}
+                  >{`\u20B9${unrealizedProfit}`}</Text>
+                </View>
+              </View>
+            </View>
+          </Card>
+        </View>
+        <View style={styles.chartContainer}>
+          <View
+            style={{
+              position: "absolute",
+              left: 45,
+              top: 2,
+            }}
+          >
+            <Text style={styles.chartTitle}>Stocks</Text>
           </View>
+          <VictoryPie
+            data={stockdata.data}
+            endAngle={endAngle}
+            labels={({ datum }) => `${datum.x}: \n \u20B9${datum.y}`}
+            labelPosition={"centroid"}
+            padAngle={2}
+            innerRadius={35}
+            width={windowWidth}
+            height={200}
+            style={{
+              data: {
+                fillOpacity: 0.9,
+                stroke: "#ffffff",
+                strokeWidth: 1,
+              },
+              labels: {
+                fontSize: 13,
+                fill: "#000000",
+              },
+            }}
+            labelIndicator={
+              <LineSegment
+                style={{
+                  stroke: "black",
+                  fill: "black",
+                  strokeLinecap: "round",
+                }}
+              />
+            }
+            labelIndicatorInnerOffset={2}
+          />
+        </View>
+        <View>
+          <View>
+            <FlatList
+              data={holdingdata}
+              renderItem={({ item }) => (
+                <CustomCard
+                  name={item.name}
+                  qty={item.qty}
+                  cost={item.cost}
+                  delta={item.delta}
+                />
+              )}
+              keyExtractor={(item, index) => index.toString()}
+              numColumns={3}
+              columnWrapperStyle={styles.column}
+            />
+          </View>
+        </View>
       </Card>
-      </ScrollView>
     </View>
   );
 };
@@ -27,15 +184,10 @@ const InvestmentsScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#ffffff',
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#ffffff",
     paddingBottom: 10,
-  },
-  scrollContent: {
-    flexGrow: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   card: {
     width: windowWidth * 0.9,
@@ -44,10 +196,10 @@ const styles = StyleSheet.create({
     elevation: 5,
     margin: 5,
     padding: 10,
-    backgroundColor: '#ffffff',
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#000000',
+    backgroundColor: "#ffffff",
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#000000",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -55,9 +207,105 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 4,
   },
-  inputContainer: {
-    width: 250,
-    height: 65,
+  entryContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 1,
+    top: 5,
+  },
+  entryTitle: {
+    fontSize: 25,
+    fontWeight: "bold",
+    marginLeft: 10,
+  },
+  valuecard: {
+    width: windowWidth * 0.8,
+    height: 90,
+    alignItems: "center",
+    elevation: 5,
+    padding: 5,
+    marginTop: 15,
+  },
+  hstack: {
+    flexDirection: "row",
+    alignItems: "center",
+    alignSelf: "center",
+    marginBottom: 10,
+  },
+  vstack: {
+    flexDirection: "column",
+    alignItems: "center",
+    alignSelf: "center",
+  },
+  label: {
+    fontSize: 15,
+    fontWeight: "bold",
+  },
+  amount: {
+    fontSize: 13,
+    alignItems: "center",
+  },
+  greenText: {
+    color: "green",
+  },
+  redText: {
+    color: "red",
+  },
+  chartContainer: {
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    top: 5,
+    marginBottom: 10,
+  },
+  chartTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  row: {
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+    marginBottom: 15,
+  },
+  minicard: {
+    width: windowWidth * 0.25,
+    height: 50,
+    alignItems: "center",
+    elevation: 5,
+    padding: 5,
+  },
+  holdingpropcontainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    alignSelf: "center",
+    marginBottom: 4,
+  },
+  nameText: {
+    fontSize: 12,
+    fontWeight: "bold",
+    flex: 1,
+    flexWrap: "wrap",
+  },
+  qtyContainer: {
+    marginLeft: 2,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  qtyText: {
+    marginLeft: 2,
+    fontSize: 10,
+  },
+  costText: {
+    fontSize: 12,
+  },
+  deltaText: {
+    fontSize: 12,
+    fontWeight: "bold",
+  },
+  column: {
+    justifyContent: "space-evenly",
+    marginBottom: 10,
   },
 });
 
