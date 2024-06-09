@@ -18,8 +18,8 @@ const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
 const TrackerScreen = () => {
-  const [showDatePicker, setShowDatePicker] = React.useState(false);
-  const [date, setDate] = React.useState(new Date());
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [date, setDate] = useState(new Date());
   const [endAngle, setEndAngle] = useState(0);
 
   const amountUsed = 6200;
