@@ -29,10 +29,18 @@ const CardsScreen = () => {
   const [displayedCardDetails, setDisplayedCardDetails] = useState(
     getCardDetails(selectedbank, selectedCardtype)
   );
+  const chip_logo_uri =
+    "https://github.com/Ruthvik-1411/Finance_Tracker_app/blob/main/assets/card_assets/card_chip.png?raw=true";
+  const nfc_logo_uri =
+    "https://github.com/Ruthvik-1411/Finance_Tracker_app/blob/main/assets/card_assets/nfc_logo.png?raw=true";
 
   useEffect(() => {
     setDisplayedCardDetails(getCardDetails(selectedbank, selectedCardtype));
   }, [selectedbank, selectedCardtype]);
+
+  const toggleVisibility = () => {
+    setShowDetails(!showDetails);
+  };
 
   return (
     <View style={styles.container}>
@@ -41,6 +49,75 @@ const CardsScreen = () => {
           <View style={styles.entryContainer}>
             <Text style={styles.entryTitle}>Cards</Text>
             <Icon name="credit-card-scan" size={35} color="#000000" />
+          </View>
+          <View>
+            <Card style={styles.cardstyle}>
+              <View style={styles.cardheader}>
+                <View>
+                  <Text style={styles.cardcategorystyle}>
+                    {showDetails ? displayedCardDetails.category : "*******"}
+                  </Text>
+                </View>
+                <View>
+                  <Image
+                    source={{
+                      uri: displayedCardDetails.banklogo,
+                    }}
+                    style={styles.banklogo}
+                    resizeMode="contain"
+                  />
+                </View>
+              </View>
+              <View style={styles.cardstaticheader}>
+                <Image
+                  source={{
+                    uri: chip_logo_uri,
+                  }}
+                  style={styles.chipstyle}
+                  resizeMode="contain"
+                />
+                <Image
+                  source={{
+                    uri: nfc_logo_uri,
+                  }}
+                  style={styles.nfcstyle}
+                  resizeMode="contain"
+                />
+              </View>
+              <View style={styles.cardNumbercontainer}>
+                <Text style={styles.cardNumberText}>
+                  {showDetails
+                    ? displayedCardDetails.number
+                    : "**** **** **** ****"}
+                </Text>
+              </View>
+              <View style={styles.middlecontainer}>
+                <Text style={styles.textheader}>Valid{"\n"}Thru</Text>
+                <Text style={styles.expiryDateText}>
+                  {" "}
+                  {showDetails ? displayedCardDetails.validity : "**/**"}{" "}
+                </Text>
+                <Text style={styles.textheader}>CVV</Text>
+                <Text style={styles.cvvText}>
+                  {" "}
+                  {showDetails ? displayedCardDetails.cvv : "***"}
+                </Text>
+              </View>
+              <View style={styles.cardfooter}>
+                <Text style={styles.cardHolder}>
+                  {showDetails
+                    ? displayedCardDetails.holdername
+                    : "****** ******"}
+                </Text>
+                <Image
+                  source={{
+                    uri: displayedCardDetails.gatewaylogo,
+                  }}
+                  style={styles.gatewaylogo}
+                  resizeMode="contain"
+                />
+              </View>
+            </Card>
           </View>
           <View style={styles.hstack}>
             <View style={styles.dropdownContainer}>
@@ -71,71 +148,24 @@ const CardsScreen = () => {
               </Picker>
             </View>
           </View>
-          <View>
-            <Card style={styles.cardstyle}>
-              <View style={styles.cardheader}>
-                <View>
-                  <Text>{displayedCardDetails.category}</Text>
-                </View>
-                <View>
-                  <Image
-                    source={{
-                      uri: displayedCardDetails.banklogo,
-                    }}
-                    style={styles.banklogo}
-                    resizeMode="contain"
-                  />
-                </View>
-              </View>
-              <View style={styles.cardstaticheader}>
-                <Image
-                  source={{
-                    uri: "https://github.com/Ruthvik-1411/Finance_Tracker_app/blob/main/assets/card_assets/card_chip.png?raw=true",
-                  }}
-                  style={styles.chipstyle}
-                  resizeMode="contain"
-                />
-                <Image
-                  source={{
-                    uri: "https://github.com/Ruthvik-1411/Finance_Tracker_app/blob/main/assets/card_assets/nfc_logo-bg.png?raw=true",
-                  }}
-                  style={styles.nfcstyle}
-                  resizeMode="contain"
-                />
-              </View>
-              <View style={styles.cardNumbercontainer}>
-                <Text style={styles.cardNumberText}>
-                  {displayedCardDetails.number}
-                </Text>
-              </View>
-              <View style={styles.middlecontainer}>
-                <Text style={styles.textheader}>Valid{"\n"}Thru</Text>
-                <Text style={styles.expiryDateText}>
-                  {" "}
-                  {displayedCardDetails.validity}{" "}
-                </Text>
-                <Text style={styles.textheader}>CVV</Text>
-                <Text style={styles.cvvText}> {displayedCardDetails.cvv}</Text>
-              </View>
-              <View style={styles.cardfooter}>
-                <Text style={styles.cardHolder}>
-                  {displayedCardDetails.holdername}
-                </Text>
-                <Image
-                  source={{
-                    uri: displayedCardDetails.gatewaylogo,
-                  }}
-                  style={styles.gatewaylogo}
-                  resizeMode="contain"
-                />
-              </View>
-            </Card>
-          </View>
-          <View>
+          <View style={styles.hideicon}>
             <Button
-              onPress={() => setShowDetails(true)}
-              icon={<Icon name="eye" size={15} color={"black"} />}
-              type="clear"
+              onPress={toggleVisibility}
+              icon={
+                <Icon
+                  name={showDetails ? "eye-off" : "eye"}
+                  size={20}
+                  color={"white"}
+                />
+              }
+              buttonStyle={{
+                backgroundColor: "#040404",
+                borderRadius: 15,
+                // elevation: 5,
+              }}
+              containerStyle={{
+                width: 50,
+              }}
             />
           </View>
         </Card>
@@ -166,7 +196,7 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: "#ffffff",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "flex-start",
     shadowColor: "#000000",
     shadowOffset: {
       width: 0,
@@ -198,7 +228,7 @@ const styles = StyleSheet.create({
     elevation: 4,
     borderRadius: 12,
     marginTop: 25,
-    marginLeft: 15,
+    marginLeft: 10,
     marginBottom: 15,
   },
   dropdownbin: {
@@ -231,16 +261,21 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.3,
     shadowRadius: 4,
-    // justifyContent: 'space-between'
   },
   cardheader: {
     flexDirection: "row",
     justifyContent: "space-between",
   },
+  cardcategorystyle: {
+    marginLeft: 15,
+    marginTop: 10,
+    color: "#ffffff",
+    fontSize: 14,
+    fontWeight: "ultralight",
+  },
   banklogo: {
     width: 100,
     height: 30,
-    // backgroundColor: "#ffffff",
   },
   cardstaticheader: {
     flexDirection: "row",
@@ -260,12 +295,12 @@ const styles = StyleSheet.create({
   cardNumbercontainer: {
     alignItems: "center",
     marginTop: 2,
-    // backgroundColor: "#ffffff",
   },
   cardNumberText: {
     fontSize: 18,
     color: "#ffffff",
     letterSpacing: 2,
+    fontWeight: "bold",
   },
   middlecontainer: {
     flexDirection: "row",
@@ -276,16 +311,19 @@ const styles = StyleSheet.create({
   textheader: {
     fontSize: 10,
     color: "#000000",
+    fontWeight: "ultralight",
   },
   expiryDateText: {
     fontSize: 14,
     color: "#ffffff",
     letterSpacing: 1,
+    fontWeight: "ultralight",
   },
   cvvText: {
     fontSize: 14,
     color: "#ffffff",
     letterSpacing: 1,
+    fontWeight: "ultralight",
   },
   cardfooter: {
     flexDirection: "row",
@@ -297,13 +335,16 @@ const styles = StyleSheet.create({
     color: "#ffffff",
     marginLeft: 5,
     marginTop: 15,
-    // backgroundColor: "#fff",
+    fontWeight: "bold",
   },
   gatewaylogo: {
     width: 60,
     height: 40,
     marginLeft: 10,
-    // backgroundColor: "#fff",
+  },
+  hideicon: {
+    alignItems: "center",
+    marginTop: 20,
   },
 });
 
