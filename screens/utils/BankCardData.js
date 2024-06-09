@@ -3,7 +3,7 @@ export const cardDetails = {
     credit: {
       category: "Platinum Credit",
       banklogo:
-        "https://github.com/Ruthvik-1411/Finance_Tracker_app/blob/main/assets/card_assets/hdfc_bank_logo_.png?raw=true",
+        "https://github.com/Ruthvik-1411/Finance_Tracker_app/blob/main/assets/card_assets/hdfc_bank_logo.png?raw=true",
       number: "1234 5678 9012 3456",
       validity: "12/24",
       cvv: "123",
@@ -14,7 +14,7 @@ export const cardDetails = {
     debit: {
       category: "Platinum Debit",
       banklogo:
-        "https://github.com/Ruthvik-1411/Finance_Tracker_app/blob/main/assets/card_assets/hdfc_bank_logo_.png?raw=true",
+        "https://github.com/Ruthvik-1411/Finance_Tracker_app/blob/main/assets/card_assets/hdfc_bank_logo.png?raw=true",
       number: "1234 5678 9012 3456",
       validity: "12/24",
       cvv: "123",
@@ -27,7 +27,7 @@ export const cardDetails = {
     debit: {
       category: "Diamond Debit",
       banklogo:
-        "https://github.com/Ruthvik-1411/Finance_Tracker_app/blob/main/assets/card_assets/State_Bank_of_India_logo.png?raw=true",
+        "https://github.com/Ruthvik-1411/Finance_Tracker_app/blob/main/assets/card_assets/sbi_logo.png?raw=true",
       number: "1234 5678 9012 3456",
       validity: "12/24",
       cvv: "234",
@@ -64,24 +64,24 @@ export const cardDetails = {
     credit: {
       category: "Platinum Default",
       banklogo:
-        "https://github.com/Ruthvik-1411/Finance_Tracker_app/blob/main/assets/card_assets/hdfc_bank_logo_.png?raw=true",
+        "https://github.com/Ruthvik-1411/Finance_Tracker_app/blob/main/assets/card_assets/bank_default_logo.png?raw=true",
       number: "1234 5678 9012 3456",
       validity: "12/24",
       cvv: "123",
       holdername: "Dolores N. Abernathy",
       gatewaylogo:
-        "https://github.com/Ruthvik-1411/Finance_Tracker_app/blob/main/assets/card_assets/visa_logo.png?raw=true",
+        "https://github.com/Ruthvik-1411/Finance_Tracker_app/blob/main/assets/card_assets/gateway_default_logo.png?raw=true",
     },
     debit: {
       category: "Platinum Default",
       banklogo:
-        "https://github.com/Ruthvik-1411/Finance_Tracker_app/blob/main/assets/card_assets/hdfc_bank_logo_.png?raw=true",
+        "https://github.com/Ruthvik-1411/Finance_Tracker_app/blob/main/assets/card_assets/bank_default_logo.png?raw=true",
       number: "1234 5678 9012 3456",
       validity: "12/24",
       cvv: "123",
       holdername: "Dolores N. Abernathy",
       gatewaylogo:
-        "https://github.com/Ruthvik-1411/Finance_Tracker_app/blob/main/assets/card_assets/visa_logo.png?raw=true",
+        "https://github.com/Ruthvik-1411/Finance_Tracker_app/blob/main/assets/card_assets/gateway_default_logo.png?raw=true",
     },
   },
 };
