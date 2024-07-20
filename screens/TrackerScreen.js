@@ -50,8 +50,8 @@ const TrackerScreen = () => {
 
   useEffect(() => {
     const animationInterval = setInterval(() => {
-      setEndAngle((endAngle) => endAngle + 180); // Increase endAngle gradually
-    }, 2); // Adjust the interval duration for smoother animation
+      setEndAngle((endAngle) => endAngle + 180);
+    }, 2);
 
     return () => clearInterval(animationInterval);
   }, []);

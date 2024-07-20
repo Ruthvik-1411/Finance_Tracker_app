@@ -16,10 +16,11 @@ const InvestmentsScreen = () => {
 
   const stockdata = {
     data: [
-      { x: "Hobbies", y: 350 },
-      { x: "Entertainment", y: 400 },
-      { x: "Travel", y: 550 },
-      { x: "Food", y: 800 },
+      { x: "Telecom", y: "10%" },
+      { x: "Defence", y: "15%" },
+      { x: "Mining", y: "10%" },
+      { x: "IT", y: "20%" },
+      { x: "Bank", y: "25%"},
     ],
   };
   useEffect(() => {
@@ -31,18 +32,13 @@ const InvestmentsScreen = () => {
   }, []);
 
   const holdingdata = [
-    { name: "BEL", qty: 10, purchasecost: 1138.32, currentcost:273.00, rtdelta: 127.35 },
-    { name: "HDFCBANK", qty: 5, purchasecost: 8238.51, currentcost:273.00, rtdelta: -11.02 },
-    { name: "BHARTIARTL", qty: 2, purchasecost: 1381.1, currentcost:273.00, rtdelta: 95.17 },
-    { name: "WIPRO", qty: 2, purchasecost: 852.98, currentcost:273.00, rtdelta: 8.46 },
-    // { name: "ONGC", qty: 10,purchasecost: 1138.32, currentcost:273.00, rtdelta: 127.35 },
-    // { name: "M&M", qty: 5, purchasecost: 8238.51, currentcost:273.00, rtdelta: -11.02 },
-    // { name: "HCLTECH", qty: 6, purchasecost: 1381.1, currentcost:273.00, rtdelta: 85.17 },
-    // { name: "TATASTEEL", qty: 20, purchasecost: 852.98, currentcost:273.00, rtdelta: 88.46 },
-    // { name: "NTPC", qty: 5, purchasecost: 852.98, currentcost:273.00, rtdelta: 108.46 },
-    // { name: "ITC", qty: 10, purchasecost: 1381.1, currentcost:273.00, rtdelta: 95.17 },
-    // { name: "HINDUNILVR", qty: 12, purchasecost: 852.98, currentcost:273.00, rtdelta: 15.46 },
-    // { name: "COALINDIA", qty: 2, purchasecost: 2352.7, currentcost:273.00, rtdelta: 12.6 },
+    { name: "BEL", qty: 10, purchasecost: 113.83, currentcost:324.05, rtdelta: 2.11 },
+    { name: "HDFCBANK", qty: 10, purchasecost: 1572.62, currentcost:1648.10, rtdelta: -4.58 },
+    { name: "BHARTIARTL", qty: 2, purchasecost: 690.55, currentcost:1429.70, rtdelta: 0.47 },
+    { name: "WIPRO", qty: 2, purchasecost: 426.49, currentcost:535.10, rtdelta: 0.83 },
+    { name: "HCLTECH", qty: 5, purchasecost: 1327.34, currentcost:1519.40, rtdelta: -0.19 },
+    { name: "TATASTEEL", qty: 10, purchasecost: 112.58, currentcost:174.71, rtdelta: -0.9 },
+    { name: "ITC", qty: 10, purchasecost: 436.61, currentcost:433.65, rtdelta: 1.07 },
   ];
 
   const getunrealizedpercent = (purchasecostcost, currentcost, qty) => {
@@ -146,7 +142,7 @@ const InvestmentsScreen = () => {
           <VictoryPie
             data={stockdata.data}
             endAngle={endAngle}
-            labels={({ datum }) => `${datum.x}: \n \u20B9${datum.y}`}
+            labels={({ datum }) => `${datum.x}: \n ${datum.y}`}
             labelPosition={"centroid"}
             padAngle={2}
             innerRadius={35}
