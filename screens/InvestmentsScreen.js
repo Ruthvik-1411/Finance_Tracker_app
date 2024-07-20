@@ -16,10 +16,11 @@ const InvestmentsScreen = () => {
 
   const stockdata = {
     data: [
-      { x: "Hobbies", y: 350 },
-      { x: "Entertainment", y: 400 },
-      { x: "Travel", y: 550 },
-      { x: "Food", y: 800 },
+      { x: "Telecom", y: "10%" },
+      { x: "Defence", y: "15%" },
+      { x: "Mining", y: "10%" },
+      { x: "IT", y: "20%" },
+      { x: "Bank", y: "25%"},
     ],
   };
   useEffect(() => {
@@ -141,7 +142,7 @@ const InvestmentsScreen = () => {
           <VictoryPie
             data={stockdata.data}
             endAngle={endAngle}
-            labels={({ datum }) => `${datum.x}: \n \u20B9${datum.y}`}
+            labels={({ datum }) => `${datum.x}: \n ${datum.y}`}
             labelPosition={"centroid"}
             padAngle={2}
             innerRadius={35}
