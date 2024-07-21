@@ -20,7 +20,7 @@ const InvestmentsScreen = () => {
       { x: "Defence", y: "15%" },
       { x: "Mining", y: "10%" },
       { x: "IT", y: "20%" },
-      { x: "Bank", y: "25%"},
+      { x: "Bank", y: "25%" },
     ],
   };
   useEffect(() => {
@@ -32,53 +32,121 @@ const InvestmentsScreen = () => {
   }, []);
 
   const holdingdata = [
-    { name: "BEL", qty: 10, purchasecost: 113.83, currentcost:324.05, rtdelta: 2.11 },
-    { name: "HDFCBANK", qty: 10, purchasecost: 1572.62, currentcost:1648.10, rtdelta: -4.58 },
-    { name: "BHARTIARTL", qty: 2, purchasecost: 690.55, currentcost:1429.70, rtdelta: 0.47 },
-    { name: "WIPRO", qty: 2, purchasecost: 426.49, currentcost:535.10, rtdelta: 0.83 },
-    { name: "HCLTECH", qty: 5, purchasecost: 1327.34, currentcost:1519.40, rtdelta: -0.19 },
-    { name: "TATASTEEL", qty: 10, purchasecost: 112.58, currentcost:174.71, rtdelta: -0.9 },
-    { name: "ITC", qty: 10, purchasecost: 436.61, currentcost:433.65, rtdelta: 1.07 },
+    {
+      name: "BEL",
+      qty: 10,
+      purchasecost: 113.83,
+      currentcost: 324.05,
+      rtdelta: 2.11,
+    },
+    {
+      name: "HDFCBANK",
+      qty: 10,
+      purchasecost: 1572.62,
+      currentcost: 1648.1,
+      rtdelta: -4.58,
+    },
+    {
+      name: "BHARTIARTL",
+      qty: 2,
+      purchasecost: 690.55,
+      currentcost: 1429.7,
+      rtdelta: 0.47,
+    },
+    {
+      name: "WIPRO",
+      qty: 2,
+      purchasecost: 426.49,
+      currentcost: 535.1,
+      rtdelta: 0.83,
+    },
+    {
+      name: "HCLTECH",
+      qty: 5,
+      purchasecost: 1327.34,
+      currentcost: 1519.4,
+      rtdelta: -0.19,
+    },
+    {
+      name: "TATASTEEL",
+      qty: 10,
+      purchasecost: 112.58,
+      currentcost: 174.71,
+      rtdelta: -0.9,
+    },
+    {
+      name: "ITC",
+      qty: 10,
+      purchasecost: 436.61,
+      currentcost: 433.65,
+      rtdelta: 1.07,
+    },
   ];
 
   const getunrealizedpercent = (purchasecostcost, currentcost, qty) => {
     const totalcurrentvalue = currentcost * qty;
     const totalpurchasevalue = purchasecostcost * qty;
-    return ((totalcurrentvalue - totalpurchasevalue) / totalpurchasevalue) * 100;
+    return (
+      ((totalcurrentvalue - totalpurchasevalue) / totalpurchasevalue) * 100
+    );
   };
 
-  const CustomStockItem = ({ name, qty, purchasecost, currentcost, rtdelta }) => (
+  const CustomStockItem = ({
+    name,
+    qty,
+    purchasecost,
+    currentcost,
+    rtdelta,
+  }) => (
     <Card style={styles.minicard}>
-    <View>
-      <View style={styles.holdingcontainer}>
-        <View style={styles.holdinghstack}>
-          <Text style={styles.nameText}>{name} </Text>
-          <Icon name="briefcase" size={10} />
-          <Text style={styles.qtyText}>{qty}</Text>
-        </View>
-        <View style={styles.holdinghstack}>
-          <Text style={styles.holdingvalueText}>{`\u20B9${currentcost}`}</Text>
-          <Text
-            style={[styles.deltaText, { color: rtdelta >= 0 ? 'green' : 'red' }]}>
-            ({rtdelta}%)
-          </Text>
-        </View>
-      </View>
-      <View style={styles.holdingcontainer}>
-        <View style={styles.vstack}>
-          <Text style={styles.holdingLabel}>Invested Value</Text>
-          <Text style={styles.holdingvalueText}>{`\u20B9${(purchasecost * qty).toFixed(2)}`}</Text>
-        </View>
-        <View style={styles.vstack}>
-          <Text style={styles.holdingLabel}>Unrealized Profit</Text>
+      <View>
+        <View style={styles.holdingcontainer}>
           <View style={styles.holdinghstack}>
-            <Text style={styles.holdingvalueText}>{`\u20B9${((currentcost - purchasecost) * qty).toFixed(2)}`}</Text>
-            <Text style={[styles.deltaText, { color: (currentcost - purchasecost) >= 0 ? 'green' : 'red' }]}>
-              ({getunrealizedpercent(purchasecost, currentcost, qty).toFixed()}%)
+            <Text style={styles.nameText}>{name} </Text>
+            <Icon name="briefcase" size={10} />
+            <Text style={styles.qtyText}>{qty}</Text>
+          </View>
+          <View style={styles.holdinghstack}>
+            <Text
+              style={styles.holdingvalueText}
+            >{`\u20B9${currentcost}`}</Text>
+            <Text
+              style={[
+                styles.deltaText,
+                { color: rtdelta >= 0 ? "green" : "red" },
+              ]}
+            >
+              ({rtdelta}%)
             </Text>
           </View>
         </View>
-      </View>
+        <View style={styles.holdingcontainer}>
+          <View style={styles.vstack}>
+            <Text style={styles.holdingLabel}>Invested Value</Text>
+            <Text style={styles.holdingvalueText}>{`\u20B9${(
+              purchasecost * qty
+            ).toFixed(2)}`}</Text>
+          </View>
+          <View style={styles.vstack}>
+            <Text style={styles.holdingLabel}>Unrealized Profit</Text>
+            <View style={styles.holdinghstack}>
+              <Text style={styles.holdingvalueText}>{`\u20B9${(
+                (currentcost - purchasecost) *
+                qty
+              ).toFixed(2)}`}</Text>
+              <Text
+                style={[
+                  styles.deltaText,
+                  { color: currentcost - purchasecost >= 0 ? "green" : "red" },
+                ]}
+              >
+                (
+                {getunrealizedpercent(purchasecost, currentcost, qty).toFixed()}
+                %)
+              </Text>
+            </View>
+          </View>
+        </View>
       </View>
     </Card>
   );
@@ -121,7 +189,7 @@ const InvestmentsScreen = () => {
                     style={[
                       styles.amount,
                       styles.deltaText,
-                      { color: unrealizedProfit >= 0 ? 'green' : 'red' }
+                      { color: unrealizedProfit >= 0 ? "green" : "red" },
                     ]}
                   >{`\u20B9${unrealizedProfit}`}</Text>
                 </View>
@@ -175,9 +243,9 @@ const InvestmentsScreen = () => {
           <Text style={styles.holdingTitle}>Holdings</Text>
           <View style={styles.scrollableBoxContainer}>
             <ScrollView style={styles.scrollableBox}>
-            {holdingdata.map((item, index) => (
-            <CustomStockItem key={index} {...item} />
-          ))}
+              {holdingdata.map((item, index) => (
+                <CustomStockItem key={index} {...item} />
+              ))}
             </ScrollView>
           </View>
         </View>
@@ -271,7 +339,7 @@ const styles = StyleSheet.create({
     width: windowWidth * 0.85,
     height: 200,
     margin: 5,
-    marginLeft: 25
+    marginLeft: 25,
   },
   scrollableBox: {
     flex: 1,
@@ -286,8 +354,8 @@ const styles = StyleSheet.create({
     paddingRight: 10,
   },
   holdingcontainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   holdinghstack: {
     flexDirection: "row",
