@@ -50,14 +50,20 @@ const TrackerScreen = () => {
     return `${month}/${year}`;
   }, []);
 
-  const checkfetchnew = useCallback((chosendate) => {
-    const currentDate = new Date();
-    setLoading(true);
-    if (chosendate.getMonth() !== currentDate.getMonth() || chosendate.getFullYear() !== currentDate.getFullYear()){
-      Alert.alert("Calling API");
-    }
-    setLoading(false);
-  },[date]);
+  const checkfetchnew = useCallback(
+    (chosendate) => {
+      const currentDate = new Date();
+      setLoading(true);
+      if (
+        chosendate.getMonth() !== currentDate.getMonth() ||
+        chosendate.getFullYear() !== currentDate.getFullYear()
+      ) {
+        Alert.alert("Calling API");
+      }
+      setLoading(false);
+    },
+    [date]
+  );
 
   const onChange = useCallback(
     (event, selectedDate) => {
