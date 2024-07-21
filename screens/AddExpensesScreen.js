@@ -8,7 +8,7 @@ import {
   Alert,
   ActivityIndicator,
 } from "react-native";
-import { Card, TextInput } from "react-native-paper";
+import { Card, TextInput, IconButton } from "react-native-paper";
 import { Button } from "react-native-elements";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -54,13 +54,24 @@ const AddExpenseScreen = () => {
   };
 
   const handleAddExpense = () => {
-    // Call your backend function here to save the expense
+    // Call backend function to save the expense
     setLoading(true);
     if (amount !== "") {
       // saveExpense({ amount, category: selectedCategory });
-      // navigation.goBack();
+      if (description !== "") {
+        if (selectedCategory !== null) {
+          //call api
+        } else {
+          Alert.alert("Please select expense category!");
+          setLoading(false);
+        }
+      } else {
+        Alert.alert("Please add a description of the expense!");
+        setLoading(false);
+      }
     } else {
-      alert("Please enter an amount!");
+      Alert.alert("Please enter an amount!");
+      setLoading(false);
     }
   };
 
@@ -88,31 +99,17 @@ const AddExpenseScreen = () => {
           </View>
           <View style={styles.hstack}>
             <View style={{ width: 140, height: 60 }}></View>
-            <View
-              style={{
-                justifyContent: "center",
-              }}
-            >
-              <Card
-                style={{
-                  width: 140,
-                  alignItems: "center",
-                  elevation: 5,
-                }}
-              >
-                <View
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                  }}
-                >
+            <View style={{ justifyContent: "center" }}>
+              <Card style={styles.datecard}>
+                <View style={styles.dateelements}>
                   <Text>{formatDate(date).toString()}</Text>
-                  <Button
-                    onPress={() => setShowDatePicker(true)}
-                    icon={
-                      <Icon name="chevron-down" size={25} color={"black"} />
-                    }
-                    type="clear"
+                  <IconButton
+                    icon="chevron-down"
+                    iconColor="#000000"
+                    size={25}
+                    onPress={() => {
+                      setShowDatePicker(true);
+                    }}
                   />
                   {showDatePicker && (
                     <DateTimePicker
@@ -166,23 +163,10 @@ const AddExpenseScreen = () => {
               theme={{ colors: { primary: "#a9a9a9" } }}
             />
           </View>
-          <View
-            style={{
-              justifyContent: "center",
-              alignItems: "center",
-              marginTop: 10,
-            }}
-          >
+          <View style={styles.categorycardstyle}>
             <Card style={styles.categorycard}>
               <View style={styles.hstack}>
-                <Text
-                  style={{
-                    alignItems: "center",
-                    paddingLeft: 20,
-                    paddingRight: 20,
-                    fontSize: 20,
-                  }}
-                >
+                <Text style={styles.categorycardtext}>
                   {selectedCategory ? selectedCategory.name : "Category"}
                 </Text>
                 <Button
@@ -291,7 +275,6 @@ const styles = StyleSheet.create({
   hstack: {
     flexDirection: "row",
     alignItems: "center",
-    // justifyContent: "center",
     alignSelf: "center",
   },
   card: {
@@ -323,6 +306,18 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginLeft: 10,
   },
+  datecard: {
+    width: 140,
+    elevation: 5,
+    height: 40,
+    alignItems: "center",
+  },
+  dateelements: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginLeft: 15,
+    bottom: 7,
+  },
   inputContainer: {
     width: 270,
     height: 65,
@@ -345,13 +340,21 @@ const styles = StyleSheet.create({
     fontSize: 16,
     height: 70,
   },
+  categorycardstyle: {
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 10,
+  },
   categorycard: {
     width: 200,
-    alignItems: "center",
     elevation: 5,
-    justifyContent: "center",
     marginTop: 25,
+    justifyContent: "space-evenly",
+    alignItems: "center",
     alignSelf: "center",
+  },
+  categorycardtext: {
+    fontSize: 20,
   },
   dropdownContainer: {
     marginTop: 25,
