@@ -8,21 +8,77 @@ const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
 const InvestmentsScreen = () => {
-  const [InvestedValue, setInvestedValue] = useState(19888.06);
-  const [CurrentValue, setCurrentValue] = useState(23710.5);
-  const [RealizedProfit, setRealizedProfit] = useState(501.82);
-  const unrealizedProfit = (CurrentValue - InvestedValue).toFixed(2);
   const [endAngle, setEndAngle] = useState(0);
 
-  const stockdata = {
-    data: [
+  // need to set requestdata when api is called, so keep a default one and replace the value
+  //Todo: Add state setter to update request data 
+  const requestData = {
+    portfolio: {
+      investedValue: "19888.06",
+      currentValue: "23710.5",
+      realizedProft: "501.82",
+      unrealizedProfit: "4178.44",
+    },
+    sector: [
       { x: "Telecom", y: "10%" },
       { x: "Defence", y: "15%" },
       { x: "Mining", y: "10%" },
       { x: "IT", y: "20%" },
       { x: "Bank", y: "25%" },
     ],
+    holding: [
+      {
+        name: "BEL",
+        qty: 10,
+        purchasecost: 113.83,
+        currentcost: 324.05,
+        rtdelta: 2.11,
+      },
+      {
+        name: "HDFCBANK",
+        qty: 10,
+        purchasecost: 1572.62,
+        currentcost: 1648.1,
+        rtdelta: -4.58,
+      },
+      {
+        name: "BHARTIARTL",
+        qty: 2,
+        purchasecost: 690.55,
+        currentcost: 1429.7,
+        rtdelta: 0.47,
+      },
+      {
+        name: "WIPRO",
+        qty: 2,
+        purchasecost: 426.49,
+        currentcost: 535.1,
+        rtdelta: 0.83,
+      },
+      {
+        name: "HCLTECH",
+        qty: 5,
+        purchasecost: 1327.34,
+        currentcost: 1519.4,
+        rtdelta: -0.19,
+      },
+      {
+        name: "TATASTEEL",
+        qty: 10,
+        purchasecost: 112.58,
+        currentcost: 174.71,
+        rtdelta: -0.9,
+      },
+      {
+        name: "ITC",
+        qty: 10,
+        purchasecost: 436.61,
+        currentcost: 433.65,
+        rtdelta: 1.07,
+      },
+    ],
   };
+
   useEffect(() => {
     const animationInterval = setInterval(() => {
       setEndAngle((endAngle) => endAngle + 180);
@@ -30,58 +86,6 @@ const InvestmentsScreen = () => {
 
     return () => clearInterval(animationInterval);
   }, []);
-
-  const holdingdata = [
-    {
-      name: "BEL",
-      qty: 10,
-      purchasecost: 113.83,
-      currentcost: 324.05,
-      rtdelta: 2.11,
-    },
-    {
-      name: "HDFCBANK",
-      qty: 10,
-      purchasecost: 1572.62,
-      currentcost: 1648.1,
-      rtdelta: -4.58,
-    },
-    {
-      name: "BHARTIARTL",
-      qty: 2,
-      purchasecost: 690.55,
-      currentcost: 1429.7,
-      rtdelta: 0.47,
-    },
-    {
-      name: "WIPRO",
-      qty: 2,
-      purchasecost: 426.49,
-      currentcost: 535.1,
-      rtdelta: 0.83,
-    },
-    {
-      name: "HCLTECH",
-      qty: 5,
-      purchasecost: 1327.34,
-      currentcost: 1519.4,
-      rtdelta: -0.19,
-    },
-    {
-      name: "TATASTEEL",
-      qty: 10,
-      purchasecost: 112.58,
-      currentcost: 174.71,
-      rtdelta: -0.9,
-    },
-    {
-      name: "ITC",
-      qty: 10,
-      purchasecost: 436.61,
-      currentcost: 433.65,
-      rtdelta: 1.07,
-    },
-  ];
 
   const getunrealizedpercent = (purchasecostcost, currentcost, qty) => {
     const totalcurrentvalue = currentcost * qty;
@@ -158,29 +162,24 @@ const InvestmentsScreen = () => {
           <Text style={styles.entryTitle}>Investments</Text>
           <Icon name="finance" size={35} color="#000000" />
         </View>
-        <View
-          style={{
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
+        <View style={styles.valuecardstyle}>
           <Card style={styles.valuecard}>
             <View>
               <View style={styles.hstack}>
                 <View style={styles.vstack}>
                   <Text style={styles.valueLabel}>Invested Value</Text>
-                  <Text style={styles.amount}>{`\u20B9${InvestedValue}`}</Text>
+                  <Text style={styles.amount}>{`\u20B9${requestData.portfolio.investedValue}`}</Text>
                 </View>
                 <View style={{ width: 45 }}></View>
                 <View style={styles.vstack}>
                   <Text style={styles.valueLabel}>Current Value</Text>
-                  <Text style={styles.amount}>{`\u20B9${CurrentValue}`}</Text>
+                  <Text style={styles.amount}>{`\u20B9${requestData.portfolio.currentValue}`}</Text>
                 </View>
               </View>
               <View style={styles.hstack}>
                 <View style={styles.vstack}>
                   <Text style={styles.valueLabel}>Realized Profit</Text>
-                  <Text style={styles.amount}>{`\u20B9${RealizedProfit}`}</Text>
+                  <Text style={styles.amount}>{`\u20B9${requestData.portfolio.realizedProft}`}</Text>
                 </View>
                 <View style={{ width: 40 }}></View>
                 <View style={styles.vstack}>
@@ -189,26 +188,20 @@ const InvestmentsScreen = () => {
                     style={[
                       styles.amount,
                       styles.deltaText,
-                      { color: unrealizedProfit >= 0 ? "green" : "red" },
+                      { color: Number(requestData.portfolio.unrealizedProfit) >= 0 ? "green" : "red" },
                     ]}
-                  >{`\u20B9${unrealizedProfit}`}</Text>
+                  >{`\u20B9${requestData.portfolio.unrealizedProfit}`}</Text>
                 </View>
               </View>
             </View>
           </Card>
         </View>
         <View style={styles.chartContainer}>
-          <View
-            style={{
-              position: "absolute",
-              left: 45,
-              top: 2,
-            }}
-          >
+          <View style={styles.chartTitlestyle}>
             <Text style={styles.chartTitle}>Stocks</Text>
           </View>
           <VictoryPie
-            data={stockdata.data}
+            data={requestData.sector}
             endAngle={endAngle}
             labels={({ datum }) => `${datum.x}: \n ${datum.y}`}
             labelPosition={"centroid"}
@@ -243,7 +236,7 @@ const InvestmentsScreen = () => {
           <Text style={styles.holdingTitle}>Holdings</Text>
           <View style={styles.scrollableBoxContainer}>
             <ScrollView style={styles.scrollableBox}>
-              {holdingdata.map((item, index) => (
+              {requestData.holding.map((item, index) => (
                 <CustomStockItem key={index} {...item} />
               ))}
             </ScrollView>
@@ -292,6 +285,10 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginLeft: 10,
   },
+  valuecardstyle: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
   valuecard: {
     width: windowWidth * 0.8,
     height: 90,
@@ -325,6 +322,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     top: 5,
     marginBottom: 10,
+  },
+  chartTitlestyle: {
+    position: "absolute",
+    left: 45,
+    top: 2,
   },
   chartTitle: {
     fontSize: 18,
