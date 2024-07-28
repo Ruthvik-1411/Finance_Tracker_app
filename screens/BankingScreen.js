@@ -11,66 +11,71 @@ const windowHeight = Dimensions.get("window").height;
 
 const BankingScreen = () => {
   const [selectedbank, setSelectedbank] = useState("default_bank");
-  const [aadharnumber, setAadharnumber] = useState("0000 0000 0000");
-  const [pannumber, setPannumber] = useState("ABCDE12340");
   const [displayaadhar, setDisplayaadhar] = useState(false);
   const [displaypan, setDisplaypan] = useState(false);
 
-  const upi_data = [
-    {
-      upi_app: "Gpay",
-      bank_data: "HDFC 4366",
-      ac_type: "Debit",
-      upi_id: "abcd@okhdfc.com",
+  // request data template after parsing
+  // Todo: Add state setter to update from default request data to new
+  const requestData = {
+    identity: {
+      aadhar: "1234-5678-9012",
+      pan: "ABCDE1234F"
     },
-    {
-      upi_app: "Gpay",
-      bank_data: "HDFC 2396",
-      ac_type: "Credit",
-      upi_id: "my_cool_id@okicicdfcbank",
+    banking: {
+      hdfc: {
+        acnumber: "11234567890123",
+        username: "qwertyuiop",
+        ifsccode: "HGTE1248936",
+      },
+      hsbc: {
+        acnumber: "11123456789012",
+        username: "qwertyuiop",
+        ifsccode: "HGTE1248939",
+      },
+      iicic: {
+        acnumber: "11112345678901",
+        username: "qwertyuiop",
+        ifsccode: "HGTE1248932",
+      },
     },
-    {
-      upi_app: "Phonepay",
-      bank_data: "HDFC 9446",
-      ac_type: "Debit",
-      upi_id: "7513abcd@ybl.com",
-    },
-    {
-      upi_app: "Phonepay",
-      bank_data: "SBI 1450",
-      ac_type: "Debit",
-      upi_id: "abshsrhshcuw474gc55wd@icici.com",
-    },
-    {
-      upi_app: "i ici",
-      bank_data: "ICIC 1246",
-      ac_type: "Debit",
-      upi_id: "abcd758493@dfc.com",
-    },
-    {
-      upi_app: "ICIC",
-      bank_data: "ICIC 1010",
-      ac_type: "Debit",
-      upi_id: "abcd758493@dfc.com",
-    },
-  ];
-
-  const bankingdata = {
-    hdfc: {
-      acnumber: "11234567890123",
-      username: "qwertyuiop",
-      ifsccode: "HGTE1248936",
-    },
-    hsbc: {
-      acnumber: "11123456789012",
-      username: "qwertyuiop",
-      ifsccode: "HGTE1248939",
-    },
-    iicic: {
-      acnumber: "11112345678901",
-      username: "qwertyuiop",
-      ifsccode: "HGTE1248932",
-    },
+    upiList: [
+      {
+        upi_app: "Gpay",
+        bank_data: "HDFC 4366",
+        ac_type: "Debit",
+        upi_id: "abcd@okhdfc.com",
+      },
+      {
+        upi_app: "Gpay",
+        bank_data: "HDFC 2396",
+        ac_type: "Credit",
+        upi_id: "my_cool_id@okicicdfcbank",
+      },
+      {
+        upi_app: "Phonepay",
+        bank_data: "HDFC 9446",
+        ac_type: "Debit",
+        upi_id: "7513abcd@ybl.com",
+      },
+      {
+        upi_app: "Phonepay",
+        bank_data: "SBI 1450",
+        ac_type: "Debit",
+        upi_id: "abshsrhshcuw474gc55wd@icici.com",
+      },
+      {
+        upi_app: "i ici",
+        bank_data: "ICIC 1246",
+        ac_type: "Debit",
+        upi_id: "abcd758493@dfc.com",
+      },
+      {
+        upi_app: "ICIC",
+        bank_data: "ICIC 1010",
+        ac_type: "Debit",
+        upi_id: "abcd758493@dfc.com",
+      },
+    ]
   };
 
   const CustomUpiItem = ({ upi_app, bank_data, ac_type, upi_id }) => {
@@ -131,20 +136,20 @@ const BankingScreen = () => {
             <View>
               <Text style={styles.detailsheader}>AC Number</Text>
               <Text style={styles.acnumbertext}>
-                {bankingdata[selectedbank]?.acnumber ?? "00000000000000"}
+                {requestData.banking[selectedbank]?.acnumber ?? "00000000000000"}
               </Text>
             </View>
             <View>
               <Text style={styles.detailsheader}>IFSC Code</Text>
               <Text style={styles.ifsctext}>
-                {bankingdata[selectedbank]?.ifsccode ?? "BANK0000000"}
+                {requestData.banking[selectedbank]?.ifsccode ?? "BANK0000000"}
               </Text>
             </View>
           </View>
           <View style={{ alignSelf: "center", marginTop: 10 }}>
-            <Text style={styles.detailsheader}>UserName</Text>
+            <Text style={styles.detailsheader}>User Name</Text>
             <Text style={styles.ifsctext}>
-              {bankingdata[selectedbank]?.username ?? "Richdotcom"}
+              {requestData.banking[selectedbank]?.username ?? "Richdotcom"}
             </Text>
           </View>
         </View>
@@ -152,7 +157,7 @@ const BankingScreen = () => {
           <Text style={styles.detailsheader}>Aadhar Card</Text>
           <View style={styles.hstack}>
             <Text style={styles.idtext}>
-              {displayaadhar ? aadharnumber : "**** **** 0000"}
+              {displayaadhar ? requestData.identity.aadhar : "**** **** 0000"}
             </Text>
             <IconButton
               icon={displayaadhar ? "eye-off" : "eye"}
@@ -166,7 +171,7 @@ const BankingScreen = () => {
           <Text style={styles.detailsheader}>Pan Number</Text>
           <View style={styles.hstack}>
             <Text style={styles.idtext}>
-              {displaypan ? pannumber : "A********0 "}
+              {displaypan ? requestData.identity.pan : "A********0"}
             </Text>
             <IconButton
               icon={displaypan ? "eye-off" : "eye"}
@@ -182,7 +187,7 @@ const BankingScreen = () => {
           <Text style={styles.upiTitle}>UPI</Text>
           <View style={styles.scrollableBoxContainer}>
             <ScrollView style={styles.scrollableBox}>
-              {upi_data.map((item, index) => (
+              {requestData.upiList.map((item, index) => (
                 <CustomUpiItem key={index} {...item} />
               ))}
             </ScrollView>
@@ -267,7 +272,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-evenly",
   },
   detailsheader: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: "bold",
   },
   acnumbertext: {
