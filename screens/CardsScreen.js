@@ -12,6 +12,8 @@ import { Button } from "react-native-elements";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { Picker } from "@react-native-picker/picker";
 
+// idea is to keep all this data local as it hardly changes
+// so can be replaced with requestData in future if required
 import { cardDetails } from "./utils/BankCardData";
 
 const windowWidth = Dimensions.get("window").width;
