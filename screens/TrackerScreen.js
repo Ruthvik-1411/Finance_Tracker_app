@@ -30,18 +30,28 @@ const TrackerScreen = () => {
   const animationRef = useRef(null);
   const [loading, setLoading] = React.useState(false);
 
-  const amountUsed = 6200;
-  const budgetAmount = 10000;
-  const budgetLeft = budgetAmount - amountUsed;
-  const percentageUsed = (amountUsed / budgetAmount) * 100;
-
-  const data = {
-    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
-    datasets: [
-      {
-        data: [6813, 5200, 2000, 7240, 5568, 9000],
-      },
+  // Todo: Add state setter to update from default request data to new
+  const requestData = {
+    budget: {
+      amountUsed: 6200,
+      budgetAmount: 10000,
+      budgetLeft: 3800,
+      percentageUsed: 62
+    },
+    byCategory: [
+      { x: "Hobbies", y: 350 },
+      { x: "Entertainment", y: 400 },
+      { x: "Travel", y: 550 },
+      { x: "Food", y: 800 },
     ],
+    byMonth: {
+      "Jan": 6813,
+      "Feb": 5200,
+      "Mar": 2000,
+      "Apr": 7240,
+      "May": 5568,
+      "Jun": 9000,
+    }
   };
 
   const formatDate = useCallback((date) => {
@@ -130,13 +140,13 @@ const TrackerScreen = () => {
               <Text style={styles.label}>Budget Left</Text>
             </View>
             <View style={styles.row}>
-              <Text style={styles.amount}>{`\u20B9${amountUsed}`}</Text>
-              <Text style={styles.amount}>{`\u20B9${budgetAmount}`}</Text>
-              <Text style={styles.amount}>{`\u20B9${budgetLeft}`}</Text>
+              <Text style={styles.amount}>{`\u20B9${requestData.budget.amountUsed}`}</Text>
+              <Text style={styles.amount}>{`\u20B9${requestData.budget.budgetAmount}`}</Text>
+              <Text style={styles.amount}>{`\u20B9${requestData.budget.budgetLeft}`}</Text>
             </View>
             <View style={{ flex: 1, width: "100%" }}>
               <Progress.Bar
-                progress={percentageUsed / 100}
+                progress={requestData.budget.percentageUsed / 100}
                 width={windowWidth * 0.7}
                 height={20}
                 color={"rgba(128,128,128,0.5)"}
@@ -144,10 +154,10 @@ const TrackerScreen = () => {
                 style={styles.progressBar}
               ></Progress.Bar>
               <View style={styles.budgetusedleft}>
-                <Text>{`${percentageUsed}%`}</Text>
+                <Text>{`${requestData.budget.percentageUsed}%`}</Text>
               </View>
               <View style={styles.budgetusedright}>
-                <Text>{`${100 - percentageUsed}%`}</Text>
+                <Text>{`${100 - requestData.budget.percentageUsed}%`}</Text>
               </View>
             </View>
           </Card>
@@ -157,12 +167,7 @@ const TrackerScreen = () => {
             <Text style={styles.chartTitle}>Analysis</Text>
           </View>
           <VictoryPie
-            data={[
-              { x: "Hobbies", y: 350 },
-              { x: "Entertainment", y: 400 },
-              { x: "Travel", y: 550 },
-              { x: "Food", y: 800 },
-            ]}
+            data={requestData.byCategory}
             endAngle={endAngle}
             labels={({ datum }) => `${datum.x}: \n \u20B9${datum.y}`}
             labelPosition={"centroid"}
@@ -199,7 +204,7 @@ const TrackerScreen = () => {
           </View>
           <VictoryChart width={300} height={240}>
             <VictoryAxis
-              tickValues={data.labels}
+              tickValues={ Object.keys(requestData.byMonth)}
               style={{
                 tickLabels: { fontSize: 10, padding: 2 },
                 axis: { stroke: "none" }, // Hide axis line
@@ -208,10 +213,14 @@ const TrackerScreen = () => {
               tickLabelComponent={<VictoryLabel dx={12} />}
             />
             <VictoryBar
-              data={data.datasets[0].data.map((y, index) => ({
-                x: data.labels[index],
-                y,
-              }))}
+            data = {Object.keys(requestData.byMonth).map((month, index) => ({
+              x: month,
+              y: requestData.byMonth[month]
+            }))}
+              // data={data.datasets[0].data.map((y, index) => ({
+              //   x: data.labels[index],
+              //   y,
+              // }))}
               barRatio={0.8}
               cornerRadius={5}
               barWidth={20}
