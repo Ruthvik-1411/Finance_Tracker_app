@@ -37,7 +37,7 @@ const AddExpenseScreen = () => {
 
   const selectCategory = (category) => {
     setSelectedCategory(category);
-    toggleModal(); // Close modal after selecting a category
+    toggleModal(); // Close modal after selecting the category
   };
 
   const formatDate = (date) => {
@@ -50,7 +50,7 @@ const AddExpenseScreen = () => {
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
     setShowDatePicker(false);
-    setDate(currentDate); // Assign the selected Date object
+    setDate(currentDate);
   };
 
   const handleAddExpense = () => {
