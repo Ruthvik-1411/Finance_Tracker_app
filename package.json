@@ -29,7 +29,8 @@
     "react-native-screens": "3.31.1",
     "react-native-svg": "15.2.0",
     "react-native-vector-icons": "*",
-    "victory-native": "^37.0.2"
+    "victory-native": "^37.0.2",
+    "expo-dev-client": "~4.0.21"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"

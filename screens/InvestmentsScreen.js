@@ -1,8 +1,18 @@
-import React, { useState, useEffect } from "react";
-import { View, Text, Dimensions, ScrollView, StyleSheet } from "react-native";
+import React, { useState, useEffect, useCallback } from "react";
+import { useFocusEffect } from "@react-navigation/native";
+import {
+  View,
+  Text,
+  Dimensions,
+  ScrollView,
+  StyleSheet,
+  Alert,
+} from "react-native";
 import { Card } from "react-native-paper";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { VictoryPie, LineSegment } from "victory-native";
+
+import { investmentsScreen_requestData } from "./utils/ProxyAPIData";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -10,9 +20,7 @@ const windowHeight = Dimensions.get("window").height;
 const InvestmentsScreen = () => {
   const [endAngle, setEndAngle] = useState(0);
 
-  // need to set requestdata when api is called, so keep a default one and replace the value
-  //Todo: Add state setter to update request data 
-  const requestData = {
+  const defaultrequestData = {
     portfolio: {
       investedValue: "19888.06",
       currentValue: "23710.5",
@@ -78,6 +86,39 @@ const InvestmentsScreen = () => {
       },
     ],
   };
+
+  const [requestData, setrequestData] = useState(defaultrequestData);
+  const [lastFetchTime, setLastFetchTime] = useState(null);
+
+  const fetchData = useCallback(async () => {
+    try {
+      // simulate api call
+      // const response = await fetch('api-endpoint');
+      // const newData = await response.json();
+      setrequestData(investmentsScreen_requestData);
+      setLastFetchTime(Date.now());
+      Alert.alert("Updated just now!");
+    } catch (error) {
+      Alert.alert("Error fetching data, failed to fetch data");
+    }
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      const currentTime = Date.now();
+      if (!lastFetchTime || currentTime - lastFetchTime > 2 * 60 * 1000) {
+        fetchData();
+      }
+    }, [fetchData, lastFetchTime])
+  );
+
+  useEffect(() => {
+    const refreshInterval = setInterval(() => {
+      fetchData();
+    }, 2 * 60 * 1000);
+
+    return () => clearInterval(refreshInterval);
+  }, [fetchData]);
 
   useEffect(() => {
     const animationInterval = setInterval(() => {
@@ -168,18 +209,24 @@ const InvestmentsScreen = () => {
               <View style={styles.hstack}>
                 <View style={styles.vstack}>
                   <Text style={styles.valueLabel}>Invested Value</Text>
-                  <Text style={styles.amount}>{`\u20B9${requestData.portfolio.investedValue}`}</Text>
+                  <Text
+                    style={styles.amount}
+                  >{`\u20B9${requestData.portfolio.investedValue}`}</Text>
                 </View>
                 <View style={{ width: 45 }}></View>
                 <View style={styles.vstack}>
                   <Text style={styles.valueLabel}>Current Value</Text>
-                  <Text style={styles.amount}>{`\u20B9${requestData.portfolio.currentValue}`}</Text>
+                  <Text
+                    style={styles.amount}
+                  >{`\u20B9${requestData.portfolio.currentValue}`}</Text>
                 </View>
               </View>
               <View style={styles.hstack}>
                 <View style={styles.vstack}>
                   <Text style={styles.valueLabel}>Realized Profit</Text>
-                  <Text style={styles.amount}>{`\u20B9${requestData.portfolio.realizedProft}`}</Text>
+                  <Text
+                    style={styles.amount}
+                  >{`\u20B9${requestData.portfolio.realizedProft}`}</Text>
                 </View>
                 <View style={{ width: 40 }}></View>
                 <View style={styles.vstack}>
@@ -188,7 +235,12 @@ const InvestmentsScreen = () => {
                     style={[
                       styles.amount,
                       styles.deltaText,
-                      { color: Number(requestData.portfolio.unrealizedProfit) >= 0 ? "green" : "red" },
+                      {
+                        color:
+                          Number(requestData.portfolio.unrealizedProfit) >= 0
+                            ? "green"
+                            : "red",
+                      },
                     ]}
                   >{`\u20B9${requestData.portfolio.unrealizedProfit}`}</Text>
                 </View>

@@ -14,7 +14,7 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Picker } from "@react-native-picker/picker";
 
-import { CategoryModal, categoriesData } from "./utils/CategoryModal";
+import { CategoryModal } from "./utils/CategoryModal";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -61,6 +61,8 @@ const AddExpenseScreen = () => {
       if (description !== "") {
         if (selectedCategory !== null) {
           //call api
+          Alert.alert("Successfully saved the expense data");
+          setLoading(false);
         } else {
           Alert.alert("Please select expense category!");
           setLoading(false);

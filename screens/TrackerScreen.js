@@ -20,6 +20,8 @@ import {
   LineSegment,
 } from "victory-native";
 
+import { trackerScreen_requestData } from "./utils/ProxyAPIData";
+
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
@@ -28,15 +30,16 @@ const TrackerScreen = () => {
   const [date, setDate] = useState(new Date());
   const [endAngle, setEndAngle] = useState(0);
   const animationRef = useRef(null);
-  const [loading, setLoading] = React.useState(false);
+  const [isloading, setIsLoading] = useState(false);
+  const [isFirstLoad, setIsFirstLoad] = useState(true);
 
-  // Todo: Add state setter to update from default request data to new
-  const requestData = {
+  // follow this api request format for backend
+  const defaultrequestData = {
     budget: {
       amountUsed: 6200,
       budgetAmount: 10000,
       budgetLeft: 3800,
-      percentageUsed: 62
+      percentageUsed: 62,
     },
     byCategory: [
       { x: "Hobbies", y: 350 },
@@ -45,14 +48,16 @@ const TrackerScreen = () => {
       { x: "Food", y: 800 },
     ],
     byMonth: {
-      "Jan": 6813,
-      "Feb": 5200,
-      "Mar": 2000,
-      "Apr": 7240,
-      "May": 5568,
-      "Jun": 9000,
-    }
+      Jan: 6813,
+      Feb: 5200,
+      Mar: 2000,
+      Apr: 7240,
+      May: 5568,
+      Jun: 9000,
+    },
   };
+
+  const [requestData, setRequestData] = useState(defaultrequestData);
 
   const formatDate = useCallback((date) => {
     const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -61,18 +66,28 @@ const TrackerScreen = () => {
   }, []);
 
   const checkfetchnew = useCallback(
-    (chosendate) => {
+    async (chosenDate) => {
       const currentDate = new Date();
-      setLoading(true);
-      if (
-        chosendate.getMonth() !== currentDate.getMonth() ||
-        chosendate.getFullYear() !== currentDate.getFullYear()
-      ) {
-        Alert.alert("Calling API");
+      setIsLoading(true);
+      try {
+        if (
+          isFirstLoad ||
+          chosenDate.getMonth() !== currentDate.getMonth() ||
+          chosenDate.getFullYear() !== currentDate.getFullYear()
+        ) {
+          // Simulate API call
+          // const response = await fetch('api-endpoint');
+          // const newData = await response.json();
+          setRequestData(trackerScreen_requestData);
+          setIsFirstLoad(false);
+        }
+      } catch (error) {
+        Alert.alert("Error fetching data, failed to fetch data");
+      } finally {
+        setIsLoading(false);
       }
-      setLoading(false);
     },
-    [date]
+    [isFirstLoad]
   );
 
   const onChange = useCallback(
@@ -84,6 +99,10 @@ const TrackerScreen = () => {
     },
     [date, checkfetchnew]
   );
+
+  useEffect(() => {
+    checkfetchnew(new Date());
+  }, []);
 
   useEffect(() => {
     const animate = () => {
@@ -103,7 +122,7 @@ const TrackerScreen = () => {
         </View>
         <View style={styles.hstack}>
           <View style={{ width: 140, height: 35 }}>
-            {loading && <ActivityIndicator size="large" color="#000000" />}
+            {isloading && <ActivityIndicator size="large" color="#000000" />}
           </View>
           <View>
             <Card style={styles.datecard}>
@@ -140,9 +159,15 @@ const TrackerScreen = () => {
               <Text style={styles.label}>Budget Left</Text>
             </View>
             <View style={styles.row}>
-              <Text style={styles.amount}>{`\u20B9${requestData.budget.amountUsed}`}</Text>
-              <Text style={styles.amount}>{`\u20B9${requestData.budget.budgetAmount}`}</Text>
-              <Text style={styles.amount}>{`\u20B9${requestData.budget.budgetLeft}`}</Text>
+              <Text
+                style={styles.amount}
+              >{`\u20B9${requestData.budget.amountUsed}`}</Text>
+              <Text
+                style={styles.amount}
+              >{`\u20B9${requestData.budget.budgetAmount}`}</Text>
+              <Text
+                style={styles.amount}
+              >{`\u20B9${requestData.budget.budgetLeft}`}</Text>
             </View>
             <View style={{ flex: 1, width: "100%" }}>
               <Progress.Bar
@@ -154,10 +179,14 @@ const TrackerScreen = () => {
                 style={styles.progressBar}
               ></Progress.Bar>
               <View style={styles.budgetusedleft}>
-                <Text>{`${requestData.budget.percentageUsed}%`}</Text>
+                <Text>{`${requestData.budget.percentageUsed.toFixed(
+                  2
+                )}%`}</Text>
               </View>
               <View style={styles.budgetusedright}>
-                <Text>{`${100 - requestData.budget.percentageUsed}%`}</Text>
+                <Text>{`${(100 - requestData.budget.percentageUsed).toFixed(
+                  2
+                )}%`}</Text>
               </View>
             </View>
           </Card>
@@ -202,42 +231,40 @@ const TrackerScreen = () => {
           <View style={styles.chartTitlestyle}>
             <Text style={styles.chartTitle}>Trend</Text>
           </View>
-          <VictoryChart width={300} height={240}>
-            <VictoryAxis
-              tickValues={ Object.keys(requestData.byMonth)}
-              style={{
-                tickLabels: { fontSize: 10, padding: 2 },
-                axis: { stroke: "none" }, // Hide axis line
-                grid: { stroke: "none" }, // Hide grid lines
-              }}
-              tickLabelComponent={<VictoryLabel dx={12} />}
-            />
-            <VictoryBar
-            data = {Object.keys(requestData.byMonth).map((month, index) => ({
-              x: month,
-              y: requestData.byMonth[month]
-            }))}
-              // data={data.datasets[0].data.map((y, index) => ({
-              //   x: data.labels[index],
-              //   y,
-              // }))}
-              barRatio={0.8}
-              cornerRadius={5}
-              barWidth={20}
-              labels={({ datum }) => `\u20B9${datum.y}`}
-              labelComponent={
-                <VictoryLabel
-                  dy={-2}
-                  dx={10}
-                  style={{
-                    tickLabels: { fontSize: 12 },
-                  }}
-                />
-              }
-              style={{ data: { fill: "rgba(128,128,128,0.5)" } }}
-              alignment="start" // Align bars to the right of the tick marks
-            />
-          </VictoryChart>
+          <View style={styles.barchartstyle}>
+            <VictoryChart width={300} height={240}>
+              <VictoryAxis
+                tickValues={Object.keys(requestData.byMonth)}
+                style={{
+                  tickLabels: { fontSize: 10, padding: 2 },
+                  axis: { stroke: "none" }, // Hide axis line
+                  grid: { stroke: "none" }, // Hide grid lines
+                }}
+                tickLabelComponent={<VictoryLabel dx={12} />}
+              />
+              <VictoryBar
+                data={Object.keys(requestData.byMonth).map((month, index) => ({
+                  x: month,
+                  y: requestData.byMonth[month],
+                }))}
+                barRatio={0.8}
+                cornerRadius={5}
+                barWidth={20}
+                labels={({ datum }) => `\u20B9${datum.y}`}
+                labelComponent={
+                  <VictoryLabel
+                    dy={-2}
+                    dx={10}
+                    style={{
+                      tickLabels: { fontSize: 12 },
+                    }}
+                  />
+                }
+                style={{ data: { fill: "rgba(128,128,128,0.5)" } }}
+                alignment="start" // Align bars to the right of the tick marks
+              />
+            </VictoryChart>
+          </View>
         </View>
       </Card>
     </View>
@@ -308,6 +335,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     elevation: 5,
     padding: 5,
+    marginBottom: -10,
   },
   row: {
     flexDirection: "row",
@@ -340,16 +368,20 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     top: 5,
-    marginBottom: -10,
+    marginBottom: -20,
   },
   chartTitlestyle: {
     position: "absolute",
     left: 45,
     top: 25,
+    marginBottom: 20,
   },
   chartTitle: {
     fontSize: 18,
     fontWeight: "bold",
+  },
+  barchartstyle: {
+    marginTop: 20,
   },
   inputContainer: {
     width: 250,
