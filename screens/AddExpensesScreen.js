@@ -61,7 +61,7 @@ const AddExpenseScreen = () => {
       if (description !== "") {
         if (selectedCategory !== null) {
           //call api
-          Alert.alert("Successfully saved the expense data")
+          Alert.alert("Successfully saved the expense data");
           setLoading(false);
         } else {
           Alert.alert("Please select expense category!");

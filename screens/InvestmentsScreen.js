@@ -1,6 +1,13 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { useFocusEffect } from '@react-navigation/native';
-import { View, Text, Dimensions, ScrollView, StyleSheet, Alert } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
+import {
+  View,
+  Text,
+  Dimensions,
+  ScrollView,
+  StyleSheet,
+  Alert,
+} from "react-native";
 import { Card } from "react-native-paper";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { VictoryPie, LineSegment } from "victory-native";
@@ -90,7 +97,7 @@ const InvestmentsScreen = () => {
       // const newData = await response.json();
       setrequestData(investmentsScreen_requestData);
       setLastFetchTime(Date.now());
-      Alert.alert("Updated just now!")
+      Alert.alert("Updated just now!");
     } catch (error) {
       Alert.alert("Error fetching data, failed to fetch data");
     }
@@ -99,7 +106,7 @@ const InvestmentsScreen = () => {
   useFocusEffect(
     useCallback(() => {
       const currentTime = Date.now();
-      if (!lastFetchTime || (currentTime - lastFetchTime) > 2 * 60 * 1000) {
+      if (!lastFetchTime || currentTime - lastFetchTime > 2 * 60 * 1000) {
         fetchData();
       }
     }, [fetchData, lastFetchTime])
@@ -202,18 +209,24 @@ const InvestmentsScreen = () => {
               <View style={styles.hstack}>
                 <View style={styles.vstack}>
                   <Text style={styles.valueLabel}>Invested Value</Text>
-                  <Text style={styles.amount}>{`\u20B9${requestData.portfolio.investedValue}`}</Text>
+                  <Text
+                    style={styles.amount}
+                  >{`\u20B9${requestData.portfolio.investedValue}`}</Text>
                 </View>
                 <View style={{ width: 45 }}></View>
                 <View style={styles.vstack}>
                   <Text style={styles.valueLabel}>Current Value</Text>
-                  <Text style={styles.amount}>{`\u20B9${requestData.portfolio.currentValue}`}</Text>
+                  <Text
+                    style={styles.amount}
+                  >{`\u20B9${requestData.portfolio.currentValue}`}</Text>
                 </View>
               </View>
               <View style={styles.hstack}>
                 <View style={styles.vstack}>
                   <Text style={styles.valueLabel}>Realized Profit</Text>
-                  <Text style={styles.amount}>{`\u20B9${requestData.portfolio.realizedProft}`}</Text>
+                  <Text
+                    style={styles.amount}
+                  >{`\u20B9${requestData.portfolio.realizedProft}`}</Text>
                 </View>
                 <View style={{ width: 40 }}></View>
                 <View style={styles.vstack}>
@@ -222,7 +235,12 @@ const InvestmentsScreen = () => {
                     style={[
                       styles.amount,
                       styles.deltaText,
-                      { color: Number(requestData.portfolio.unrealizedProfit) >= 0 ? "green" : "red" },
+                      {
+                        color:
+                          Number(requestData.portfolio.unrealizedProfit) >= 0
+                            ? "green"
+                            : "red",
+                      },
                     ]}
                   >{`\u20B9${requestData.portfolio.unrealizedProfit}`}</Text>
                 </View>

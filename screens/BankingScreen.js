@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect } from "@react-navigation/native";
 import { View, Text, Alert, ScrollView } from "react-native";
 import { Dimensions, StyleSheet } from "react-native";
 import { Card, IconButton } from "react-native-paper";
@@ -21,7 +21,7 @@ const BankingScreen = () => {
   const defaultrequestData = {
     identity: {
       aadhar: "1234-5678-9012",
-      pan: "ABCDE1234F"
+      pan: "ABCDE1234F",
     },
     banking: {
       hdfc: {
@@ -77,7 +77,7 @@ const BankingScreen = () => {
         ac_type: "Debit",
         upi_id: "abcd758493@dfc.com",
       },
-    ]
+    ],
   };
 
   const [requestData, setrequestData] = useState(defaultrequestData);
@@ -160,7 +160,8 @@ const BankingScreen = () => {
             <View>
               <Text style={styles.detailsheader}>AC Number</Text>
               <Text style={styles.acnumbertext}>
-                {requestData.banking[selectedbank]?.acnumber ?? "00000000000000"}
+                {requestData.banking[selectedbank]?.acnumber ??
+                  "00000000000000"}
               </Text>
             </View>
             <View>
