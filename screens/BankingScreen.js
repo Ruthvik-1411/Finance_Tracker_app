@@ -1,10 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
+import { useFocusEffect } from '@react-navigation/native';
 import { View, Text, Alert, ScrollView } from "react-native";
 import { Dimensions, StyleSheet } from "react-native";
 import { Card, IconButton } from "react-native-paper";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { Picker } from "@react-native-picker/picker";
 import * as Clipboard from "expo-clipboard";
+
+import { bankingScreen_requestData } from "./utils/ProxyAPIData";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -13,10 +16,9 @@ const BankingScreen = () => {
   const [selectedbank, setSelectedbank] = useState("default_bank");
   const [displayaadhar, setDisplayaadhar] = useState(false);
   const [displaypan, setDisplaypan] = useState(false);
+  const [isDataFetched, setIsDataFetched] = useState(false);
 
-  // request data template after parsing
-  // Todo: Add state setter to update from default request data to new
-  const requestData = {
+  const defaultrequestData = {
     identity: {
       aadhar: "1234-5678-9012",
       pan: "ABCDE1234F"
@@ -77,6 +79,28 @@ const BankingScreen = () => {
       },
     ]
   };
+
+  const [requestData, setrequestData] = useState(defaultrequestData);
+
+  const fetchData = useCallback(async () => {
+    if (!isDataFetched) {
+      try {
+        // simulate api call
+        // const response = await fetch('api-endpoint-for-screen-c');
+        // const newData = await response.json();
+        setrequestData(bankingScreen_requestData);
+        setIsDataFetched(true);
+      } catch (error) {
+        Alert.alert("Error fetching data, failed to fetch data");
+      }
+    }
+  }, [isDataFetched]);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchData();
+    }, [fetchData])
+  );
 
   const CustomUpiItem = ({ upi_app, bank_data, ac_type, upi_id }) => {
     const copyToClipboard = async () => {
