@@ -5,7 +5,7 @@ const { width } = Dimensions.get('window');
 const modalWidth = width - 30; // Assuming 20 is marginHorizontal in Card
 const itemWidth = modalWidth / 4;
 
-export const categoriesData = [
+const categoriesData = [
   { id: 1, name: 'Development', icon: 'developer-board' },
   { id: 2, name: 'Dining', icon: 'food-outline' },
   { id: 3, name: 'Donation', icon: 'hand-coin-outline' },
