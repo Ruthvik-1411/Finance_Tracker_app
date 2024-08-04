@@ -120,6 +120,7 @@ const AddExpenseScreen = () => {
                       mode={"date"}
                       is24Hour={true}
                       display="default"
+                      maximumDate={new Date()}
                       onChange={onChange}
                     />
                   )}
