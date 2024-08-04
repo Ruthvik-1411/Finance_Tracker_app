@@ -86,7 +86,7 @@ const BankingScreen = () => {
     if (!isDataFetched) {
       try {
         // simulate api call
-        // const response = await fetch('api-endpoint-for-screen-c');
+        // const response = await fetch('api-endpoint');
         // const newData = await response.json();
         setrequestData(bankingScreen_requestData);
         setIsDataFetched(true);

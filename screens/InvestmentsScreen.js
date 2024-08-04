@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import {
   View,
@@ -19,6 +19,7 @@ const windowHeight = Dimensions.get("window").height;
 
 const InvestmentsScreen = () => {
   const [endAngle, setEndAngle] = useState(0);
+  const animationRef = useRef(null);
 
   const defaultrequestData = {
     portfolio: {
@@ -88,16 +89,17 @@ const InvestmentsScreen = () => {
   };
 
   const [requestData, setrequestData] = useState(defaultrequestData);
-  const [lastFetchTime, setLastFetchTime] = useState(null);
+  const hasFetchedData = useRef(false);
 
   const fetchData = useCallback(async () => {
+    if (hasFetchedData.current) return;
+
     try {
       // simulate api call
       // const response = await fetch('api-endpoint');
       // const newData = await response.json();
       setrequestData(investmentsScreen_requestData);
-      setLastFetchTime(Date.now());
-      Alert.alert("Updated just now!");
+      hasFetchedData.current = true;
     } catch (error) {
       Alert.alert("Error fetching data, failed to fetch data");
     }
@@ -105,27 +107,17 @@ const InvestmentsScreen = () => {
 
   useFocusEffect(
     useCallback(() => {
-      const currentTime = Date.now();
-      if (!lastFetchTime || currentTime - lastFetchTime > 2 * 60 * 1000) {
-        fetchData();
-      }
-    }, [fetchData, lastFetchTime])
+      fetchData();
+    }, [fetchData])
   );
 
   useEffect(() => {
-    const refreshInterval = setInterval(() => {
-      fetchData();
-    }, 2 * 60 * 1000);
-
-    return () => clearInterval(refreshInterval);
-  }, [fetchData]);
-
-  useEffect(() => {
-    const animationInterval = setInterval(() => {
-      setEndAngle((endAngle) => endAngle + 180);
-    }, 2);
-
-    return () => clearInterval(animationInterval);
+    const animate = () => {
+      setEndAngle((angle) => angle + 180);
+      animationRef.current = requestAnimationFrame(animate);
+    };
+    animationRef.current = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(animationRef.current);
   }, []);
 
   const getunrealizedpercent = (purchasecostcost, currentcost, qty) => {
