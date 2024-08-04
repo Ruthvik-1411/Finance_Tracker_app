@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "BitWault",
-    "slug": "placeholder",
+    "slug": "snack-6c40a330-f89c-44be-8734-b8b95b41b77d",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -21,17 +21,10 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      },
-      "package": "placeholder"
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    },
-    "extra": {
-      "eas": {
-        "projectId": "placeholder"
-      }
-    },
-    "owner": "placeholder"
+    }
   }
 }
