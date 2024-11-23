@@ -1,107 +1,60 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useFocusEffect } from "@react-navigation/native";
-import {
-  View,
-  Text,
-  Dimensions,
-  ScrollView,
-  StyleSheet,
-  Alert,
-} from "react-native";
+import { View, Text, ScrollView, StyleSheet, Alert, ActivityIndicator } from "react-native";
 import { Card } from "react-native-paper";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import { VictoryPie, LineSegment } from "victory-native";
+import { VictoryPie, VictoryLabel, LineSegment } from "victory-native";
 
-import { investmentsScreen_requestData } from "./utils/ProxyAPIData";
-
-const windowWidth = Dimensions.get("window").width;
-const windowHeight = Dimensions.get("window").height;
+import {
+  checkInternetConnection,
+  windowWidth,
+  windowHeight,
+  defaultInvestmentsData,
+} from "./utils/dataConfig";
 
 const InvestmentsScreen = () => {
   const [endAngle, setEndAngle] = useState(0);
   const animationRef = useRef(null);
-
-  const defaultrequestData = {
-    portfolio: {
-      investedValue: "19888.06",
-      currentValue: "23710.5",
-      realizedProft: "501.82",
-      unrealizedProfit: "4178.44",
-    },
-    sector: [
-      { x: "Telecom", y: "10%" },
-      { x: "Defence", y: "15%" },
-      { x: "Mining", y: "10%" },
-      { x: "IT", y: "20%" },
-      { x: "Bank", y: "25%" },
-    ],
-    holding: [
-      {
-        name: "BEL",
-        qty: 10,
-        purchasecost: 113.83,
-        currentcost: 324.05,
-        rtdelta: 2.11,
-      },
-      {
-        name: "HDFCBANK",
-        qty: 10,
-        purchasecost: 1572.62,
-        currentcost: 1648.1,
-        rtdelta: -4.58,
-      },
-      {
-        name: "BHARTIARTL",
-        qty: 2,
-        purchasecost: 690.55,
-        currentcost: 1429.7,
-        rtdelta: 0.47,
-      },
-      {
-        name: "WIPRO",
-        qty: 2,
-        purchasecost: 426.49,
-        currentcost: 535.1,
-        rtdelta: 0.83,
-      },
-      {
-        name: "HCLTECH",
-        qty: 5,
-        purchasecost: 1327.34,
-        currentcost: 1519.4,
-        rtdelta: -0.19,
-      },
-      {
-        name: "TATASTEEL",
-        qty: 10,
-        purchasecost: 112.58,
-        currentcost: 174.71,
-        rtdelta: -0.9,
-      },
-      {
-        name: "ITC",
-        qty: 10,
-        purchasecost: 436.61,
-        currentcost: 433.65,
-        rtdelta: 1.07,
-      },
-    ],
-  };
-
-  const [requestData, setrequestData] = useState(defaultrequestData);
-  const hasFetchedData = useRef(false);
+  const [requestData, setRequestData] = useState(defaultInvestmentsData);
+  const hasFetchedData = useRef(false); //to implement refresh logic in future
+  const [loading, setLoading] = React.useState(false);
 
   const fetchData = useCallback(async () => {
     if (hasFetchedData.current) return;
-
     try {
-      // simulate api call
-      // const response = await fetch('api-endpoint');
-      // const newData = await response.json();
-      setrequestData(investmentsScreen_requestData);
-      hasFetchedData.current = true;
+      setLoading(true);
+      const isConnected = await checkInternetConnection();
+      if(!isConnected){
+        setLoading(false);
+        Alert.alert(
+          "Network Error",
+          "Please check the internet connection. Unable to reach the server."
+        );
+      }
+      else{
+        // call backend api
+        // get response from backend endpoint
+
+        if (!response.ok) {
+          setLoading(false);
+          Alert.alert(`HTTP Error: ${response.status}`, "Something went wrong!");
+        }
+        const result = await response.json();
+        if (result.status === 200) {
+          setLoading(false);
+          setRequestData(result.data);
+          hasFetchedData.current = true;
+        } else {
+          setLoading(false);
+          Alert.alert(
+            result.header,
+            `${"Unable to fetch investments data."}\n${result.message}`
+          );
+        }
+      }
     } catch (error) {
-      Alert.alert("Error fetching data, failed to fetch data");
+      setLoading(false);
+      Alert.alert("Error fetching investments data, failed to investment data");
     }
   }, []);
 
@@ -194,6 +147,9 @@ const InvestmentsScreen = () => {
         <View style={styles.entryContainer}>
           <Text style={styles.entryTitle}>Investments</Text>
           <Icon name="finance" size={35} color="#000000" />
+          <View style={{marginTop: 10, height: 30}}>
+            {loading && <ActivityIndicator size="small" color="#000000" />}
+          </View>
         </View>
         <View style={styles.valuecardstyle}>
           <Card style={styles.valuecard}>
@@ -247,7 +203,10 @@ const InvestmentsScreen = () => {
           <VictoryPie
             data={requestData.sector}
             endAngle={endAngle}
-            labels={({ datum }) => `${datum.x}: \n ${datum.y}`}
+            labelComponent={
+              <VictoryLabel style={{ fontSize: 12, fill: "#000000" }} />
+            }
+            labels={({ datum }) => `${datum.x}  \n ${datum.y}%`}
             labelPosition={"centroid"}
             padAngle={2}
             innerRadius={35}
@@ -264,6 +223,7 @@ const InvestmentsScreen = () => {
                 fill: "#000000",
               },
             }}
+            labelPlacement="vertical"
             labelIndicator={
               <LineSegment
                 style={{

@@ -1,12 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Dimensions,
-  ActivityIndicator,
-  Alert,
-} from "react-native";
+import { View, Text, StyleSheet, ActivityIndicator, Alert } from "react-native";
 import { Card, IconButton } from "react-native-paper";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -20,44 +13,22 @@ import {
   LineSegment,
 } from "victory-native";
 
-import { trackerScreen_requestData } from "./utils/ProxyAPIData";
-
-const windowWidth = Dimensions.get("window").width;
-const windowHeight = Dimensions.get("window").height;
+import {
+  checkInternetConnection,
+  windowWidth,
+  windowHeight,
+  defaultExpenseData,
+} from "./utils/dataConfig";
 
 const TrackerScreen = () => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [date, setDate] = useState(new Date());
+  const [previousDate, setpreviousDate] = useState(new Date());
   const [endAngle, setEndAngle] = useState(0);
   const animationRef = useRef(null);
-  const [isloading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [isFirstLoad, setIsFirstLoad] = useState(true);
-
-  // follow this api request format for backend
-  const defaultrequestData = {
-    budget: {
-      amountUsed: 6200,
-      budgetAmount: 10000,
-      budgetLeft: 3800,
-      percentageUsed: 62,
-    },
-    byCategory: [
-      { x: "Hobbies", y: 350 },
-      { x: "Entertainment", y: 400 },
-      { x: "Travel", y: 550 },
-      { x: "Food", y: 800 },
-    ],
-    byMonth: {
-      Jan: 6813,
-      Feb: 5200,
-      Mar: 2000,
-      Apr: 7240,
-      May: 5568,
-      Jun: 9000,
-    },
-  };
-
-  const [requestData, setRequestData] = useState(defaultrequestData);
+  const [requestData, setRequestData] = useState(defaultExpenseData);
 
   const formatDate = useCallback((date) => {
     const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -67,35 +38,65 @@ const TrackerScreen = () => {
 
   const checkfetchnew = useCallback(
     async (chosenDate) => {
-      const currentDate = new Date();
-      setIsLoading(true);
+      setLoading(true);
       try {
-        if (
-          isFirstLoad ||
-          chosenDate.getMonth() !== currentDate.getMonth() ||
-          chosenDate.getFullYear() !== currentDate.getFullYear()
-        ) {
-          // Simulate API call
-          // const response = await fetch('api-endpoint');
-          // const newData = await response.json();
-          setRequestData(trackerScreen_requestData);
-          setIsFirstLoad(false);
+        const isConnected = await checkInternetConnection();
+        if (!isConnected){
+          setLoading(false);
+          Alert.alert(
+            "Network Error",
+            "Please check the internet connection. Unable to reach the server."
+          );
+        }
+        else{
+          if (
+            isFirstLoad ||
+            formatDate(chosenDate) !== formatDate(previousDate)
+          ) {
+            // call backend api
+            // get response from backend endpoint
+
+            if (!response.ok) {
+              Alert.alert(
+                `HTTP Error: ${response.status}`,
+                "Something went wrong!"
+              );
+            }
+            const result = await response.json();
+            if (result.status === 200) {
+              setRequestData(result.data);
+              setIsFirstLoad(false);
+              setpreviousDate(chosenDate);
+            } else {
+              Alert.alert(
+                result.header,
+                `${"Unable to fetch expense data."}\n${result.message}`
+              );
+            }
+          }
         }
       } catch (error) {
-        Alert.alert("Error fetching data, failed to fetch data");
+        Alert.alert(
+          "Error fetching expense data, failed to expense fetch data"
+        );
       } finally {
-        setIsLoading(false);
+        setLoading(false);
       }
     },
-    [isFirstLoad]
+    [isFirstLoad, previousDate, formatDate]
   );
 
   const onChange = useCallback(
     (event, selectedDate) => {
-      const currentDate = selectedDate || date;
-      setShowDatePicker(false);
-      setDate(currentDate);
-      checkfetchnew(currentDate);
+      if (event.type == "set"){
+        const currentDate = selectedDate || date;
+        setShowDatePicker(false);
+        setDate(currentDate);
+        checkfetchnew(currentDate);
+      }
+      else{
+        setShowDatePicker(false);
+      }
     },
     [date, checkfetchnew]
   );
@@ -119,11 +120,11 @@ const TrackerScreen = () => {
         <View style={styles.entryContainer}>
           <Text style={styles.entryTitle}>Summary </Text>
           <Icon name="chart-arc" size={35} color="#000000" />
-        </View>
-        <View style={styles.hstack}>
-          <View style={{ width: 140, height: 35 }}>
-            {isloading && <ActivityIndicator size="large" color="#000000" />}
+          <View style={{marginTop: 10, height: 30}}>
+            {loading && <ActivityIndicator size="small" color="#000000" />}
           </View>
+        </View>
+        <View style={styles.datecontainer}>
           <View>
             <Card style={styles.datecard}>
               <View style={styles.dateelements}>
@@ -198,7 +199,10 @@ const TrackerScreen = () => {
           <VictoryPie
             data={requestData.byCategory}
             endAngle={endAngle}
-            labels={({ datum }) => `${datum.x}: \n \u20B9${datum.y}`}
+            labelComponent={
+              <VictoryLabel style={{ fontSize: 10, fill: "#000000" }} />
+            }
+            labels={({ datum }) => `${datum.x}\n \u20B9${datum.y}`}
             labelPosition={"centroid"}
             padAngle={2}
             innerRadius={35}
@@ -215,6 +219,7 @@ const TrackerScreen = () => {
                 fill: "#000000",
               },
             }}
+            labelPlacement="vertical"
             labelIndicator={
               <LineSegment
                 style={{
@@ -250,13 +255,13 @@ const TrackerScreen = () => {
                 barRatio={0.8}
                 cornerRadius={5}
                 barWidth={20}
-                labels={({ datum }) => `\u20B9${datum.y}`}
+                labels={({ datum }) => `${datum.y}`}
                 labelComponent={
                   <VictoryLabel
                     dy={-2}
                     dx={10}
                     style={{
-                      tickLabels: { fontSize: 12 },
+                      tickLabels: { fontSize: 10 },
                     }}
                   />
                 }
@@ -297,12 +302,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 4,
   },
-  hstack: {
-    flexDirection: "row",
-    alignItems: "center",
-    alignSelf: "center",
-    marginBottom: 10,
-  },
   entryContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -314,8 +313,13 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginLeft: 10,
   },
+  datecontainer: {
+    alignItems: 'flex-end',
+    marginRight: 50,
+    marginBottom: 10,
+  },
   datecard: {
-    width: 100,
+    width: 110,
     elevation: 5,
     height: 35,
   },

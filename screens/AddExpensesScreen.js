@@ -3,7 +3,6 @@ import {
   View,
   Text,
   ScrollView,
-  Dimensions,
   StyleSheet,
   Alert,
   ActivityIndicator,
@@ -15,9 +14,11 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { Picker } from "@react-native-picker/picker";
 
 import { CategoryModal } from "./utils/CategoryModal";
-
-const windowWidth = Dimensions.get("window").width;
-const windowHeight = Dimensions.get("window").height;
+import {
+  checkInternetConnection,
+  windowWidth,
+  windowHeight,
+} from "./utils/dataConfig";
 
 const AddExpenseScreen = () => {
   const [showDatePicker, setShowDatePicker] = React.useState(false);
@@ -28,7 +29,7 @@ const AddExpenseScreen = () => {
   const [showModal, setShowModal] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedbin, setSelectedbin] = React.useState("Want");
-  const [selectedTxtype, setSelectedTxtype] = React.useState("UPI");
+  const [selectedTxtype, setSelectedTxtype] = React.useState("upi");
   const [loading, setLoading] = React.useState(false);
 
   const toggleModal = () => {
@@ -53,16 +54,44 @@ const AddExpenseScreen = () => {
     setDate(currentDate);
   };
 
-  const handleAddExpense = () => {
+  const handleAddExpense = async () => {
     // Call backend function to save the expense
     setLoading(true);
     if (amount !== "") {
-      // saveExpense({ amount, category: selectedCategory });
       if (description !== "") {
         if (selectedCategory !== null) {
-          //call api
-          Alert.alert("Successfully saved the expense data");
-          setLoading(false);
+          const isConnected = await checkInternetConnection();
+          if (!isConnected){
+            setLoading(false);
+            Alert.alert(
+              "Network Error",
+              "Please check the internet connection. Unable to reach the server."
+            );
+          }
+          else{
+            // call backend api
+            // get response from backend endpoint
+
+            if (!response.ok) {
+              Alert.alert(
+                `HTTP Error: ${response.status}`,
+                "Something went wrong!"
+              );
+            }
+            const result = await response.json();
+            if (result.status === 200) {
+              Alert.alert(
+                "Success",
+                "Successfully saved the expense data to database."
+              );
+              setLoading(false);
+            } else {
+              Alert.alert(
+                result.header,
+                `${"Unable to save expense data."}\n${result.message}`
+              );
+            }
+          }
         } else {
           Alert.alert("Please select expense category!");
           setLoading(false);
@@ -85,7 +114,7 @@ const AddExpenseScreen = () => {
     setNotes("");
     setSelectedCategory(null);
     setSelectedbin("Want");
-    setSelectedTxtype("UPI");
+    setSelectedTxtype("upi");
   };
 
   return (
@@ -95,9 +124,9 @@ const AddExpenseScreen = () => {
           <View style={styles.entryContainer}>
             <Text style={styles.entryTitle}>New Expense </Text>
             <Icon name="wallet-plus-outline" size={35} color="#000000" />
-          </View>
-          <View style={[{ marginTop: 1, height: 40 }]}>
-            {loading && <ActivityIndicator size="large" color="#000000" />}
+            <View style={{marginTop: 10, height: 40}}>
+              {loading && <ActivityIndicator size="small" color="#000000" />}
+            </View>
           </View>
           <View style={styles.hstack}>
             <View style={{ width: 140, height: 60 }}></View>
@@ -149,7 +178,7 @@ const AddExpenseScreen = () => {
               onChangeText={setDescription}
               mode="flat"
               multiline={true}
-              maxLength={150}
+              maxLength={200}
               style={styles.inputdescription}
               theme={{ colors: { primary: "#a9a9a9" } }}
             />
@@ -161,7 +190,7 @@ const AddExpenseScreen = () => {
               placeholder="Notes for later"
               onChangeText={setNotes}
               mode="flat"
-              maxLength={30}
+              maxLength={120}
               style={styles.inputnotes}
               theme={{ colors: { primary: "#a9a9a9" } }}
             />
@@ -193,9 +222,9 @@ const AddExpenseScreen = () => {
                 style={styles.dropdownbin}
                 onValueChange={(itemValue) => setSelectedbin(itemValue)}
               >
-                <Picker.Item label="Want" value="want" />
-                <Picker.Item label="Need" value="need" />
-                <Picker.Item label="Required" value="required" />
+                <Picker.Item label="Want" value="Want" />
+                <Picker.Item label="Need" value="Need" />
+                <Picker.Item label="Required" value="Required" />
               </Picker>
             </View>
             <View style={styles.dropdownContainer}>

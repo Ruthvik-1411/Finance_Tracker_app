@@ -1,97 +1,68 @@
 import React, { useState, useCallback } from "react";
 import { useFocusEffect } from "@react-navigation/native";
-import { View, Text, Alert, ScrollView } from "react-native";
-import { Dimensions, StyleSheet } from "react-native";
+import { View, Text, Alert, ScrollView, ActivityIndicator } from "react-native";
+import { StyleSheet } from "react-native";
 import { Card, IconButton } from "react-native-paper";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { Picker } from "@react-native-picker/picker";
-import * as Clipboard from "expo-clipboard";
 
-import { bankingScreen_requestData } from "./utils/ProxyAPIData";
-
-const windowWidth = Dimensions.get("window").width;
-const windowHeight = Dimensions.get("window").height;
+import {
+  copyToClipboard,
+  checkInternetConnection,
+  windowWidth,
+  windowHeight,
+  defaultBankingData,
+} from "./utils/dataConfig";
 
 const BankingScreen = () => {
   const [selectedbank, setSelectedbank] = useState("default_bank");
   const [displayaadhar, setDisplayaadhar] = useState(false);
   const [displaypan, setDisplaypan] = useState(false);
   const [isDataFetched, setIsDataFetched] = useState(false);
-
-  const defaultrequestData = {
-    identity: {
-      aadhar: "1234-5678-9012",
-      pan: "ABCDE1234F",
-    },
-    banking: {
-      hdfc: {
-        acnumber: "11234567890123",
-        username: "qwertyuiop",
-        ifsccode: "HGTE1248936",
-      },
-      hsbc: {
-        acnumber: "11123456789012",
-        username: "qwertyuiop",
-        ifsccode: "HGTE1248939",
-      },
-      iicic: {
-        acnumber: "11112345678901",
-        username: "qwertyuiop",
-        ifsccode: "HGTE1248932",
-      },
-    },
-    upiList: [
-      {
-        upi_app: "Gpay",
-        bank_data: "HDFC 4366",
-        ac_type: "Debit",
-        upi_id: "abcd@okhdfc.com",
-      },
-      {
-        upi_app: "Gpay",
-        bank_data: "HDFC 2396",
-        ac_type: "Credit",
-        upi_id: "my_cool_id@okicicdfcbank",
-      },
-      {
-        upi_app: "Phonepay",
-        bank_data: "HDFC 9446",
-        ac_type: "Debit",
-        upi_id: "7513abcd@ybl.com",
-      },
-      {
-        upi_app: "Phonepay",
-        bank_data: "SBI 1450",
-        ac_type: "Debit",
-        upi_id: "abshsrhshcuw474gc55wd@icici.com",
-      },
-      {
-        upi_app: "i ici",
-        bank_data: "ICIC 1246",
-        ac_type: "Debit",
-        upi_id: "abcd758493@dfc.com",
-      },
-      {
-        upi_app: "ICIC",
-        bank_data: "ICIC 1010",
-        ac_type: "Debit",
-        upi_id: "abcd758493@dfc.com",
-      },
-    ],
-  };
-
-  const [requestData, setrequestData] = useState(defaultrequestData);
+  const [requestData, setRequestData] = useState(defaultBankingData);
+  const [loading, setLoading] = React.useState(false);
 
   const fetchData = useCallback(async () => {
     if (!isDataFetched) {
       try {
-        // simulate api call
-        // const response = await fetch('api-endpoint');
-        // const newData = await response.json();
-        setrequestData(bankingScreen_requestData);
-        setIsDataFetched(true);
+        setLoading(true);
+        const isConnected = await checkInternetConnection();
+        if(!isConnected){
+          setLoading(false);
+          Alert.alert(
+            "Network Error",
+            "Please check the internet connection. Unable to reach the server."
+          );
+        }
+        else{
+          // call backend api
+          // get response from backend endpoint
+
+          if (!response.ok) {
+            setLoading(false);
+            Alert.alert(
+              `HTTP Error: ${response.status}`,
+              "Something went wrong!"
+            );
+          }
+          const result = await response.json();
+          if (result.status === 200) {
+            setLoading(false);
+            setRequestData(result.data);
+            setIsDataFetched(true);
+          } else {
+            setLoading(false);
+            Alert.alert(
+              result.header,
+              `${"Unable to fetch banking data."}\n${result.message}`
+            );
+          }
+        }
       } catch (error) {
-        Alert.alert("Error fetching data, failed to fetch data");
+        setLoading(false);
+        Alert.alert(
+          "Error fetching banking data, failed to fetch banking data"
+        );
       }
     }
   }, [isDataFetched]);
@@ -103,9 +74,7 @@ const BankingScreen = () => {
   );
 
   const CustomUpiItem = ({ upi_app, bank_data, ac_type, upi_id }) => {
-    const copyToClipboard = async () => {
-      await Clipboard.setStringAsync(upi_id);
-    };
+
     return (
       <Card style={styles.upiCard}>
         <View style={styles.upicardContent}>
@@ -122,7 +91,7 @@ const BankingScreen = () => {
               iconColor="#000000"
               size={18}
               onPress={() => {
-                copyToClipboard(), Alert.alert("Copied UPI ID to Clipboard!");
+                copyToClipboard(upi_id), Alert.alert("Copied UPI ID to Clipboard!");
               }}
             />
           </View>
@@ -137,6 +106,9 @@ const BankingScreen = () => {
         <View style={styles.entryContainer}>
           <Text style={styles.entryTitle}>Banking</Text>
           <Icon name="bank" size={35} color="#000000" />
+          <View style={{marginTop: 10, height: 30}}>
+            {loading && <ActivityIndicator size="small" color="#000000" />}
+          </View>
         </View>
         <View style={styles.hstack}>
           <Text style={styles.credentialTitle}>Credentials</Text>
@@ -150,7 +122,7 @@ const BankingScreen = () => {
             >
               <Picker.Item label="Bank" value="default" />
               <Picker.Item label="HDFC" value="hdfc" />
-              <Picker.Item label="HSBC" value="hsbc" />
+              <Picker.Item label="SBI" value="sbi" />
               <Picker.Item label="ICICI" value="icici" />
             </Picker>
           </View>

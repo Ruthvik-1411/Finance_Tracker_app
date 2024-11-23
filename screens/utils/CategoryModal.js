@@ -13,12 +13,12 @@ const modalWidth = width - 30; // Assuming 20 is marginHorizontal in Card
 const itemWidth = modalWidth / 4;
 
 const categoriesData = [
-  { id: 1, name: "Development", icon: "developer-board" },
+  { id: 1, name: "Develop", icon: "developer-board" },
   { id: 2, name: "Dining", icon: "food-outline" },
-  { id: 3, name: "Donation", icon: "hand-coin-outline" },
-  { id: 4, name: "Education", icon: "school-outline" },
+  { id: 3, name: "Donate", icon: "hand-coin-outline" },
+  { id: 4, name: "Edu", icon: "school-outline" },
   { id: 5, name: "Electronics", icon: "devices" },
-  { id: 6, name: "Recreation", icon: "theater" },
+  { id: 6, name: "Fun", icon: "theater" },
   { id: 7, name: "Groceries", icon: "cart-variant" },
   { id: 8, name: "Healthcare", icon: "medical-bag" },
   { id: 9, name: "Hobbies", icon: "electron-framework" },

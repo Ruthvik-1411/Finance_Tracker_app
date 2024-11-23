@@ -1,13 +1,6 @@
 import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  Image,
-  ScrollView,
-  Dimensions,
-  StyleSheet,
-} from "react-native";
-import { Card } from "react-native-paper";
+import { View, Text, Image, Alert, ScrollView, StyleSheet } from "react-native";
+import { Card, IconButton } from "react-native-paper";
 import { Button } from "react-native-elements";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { Picker } from "@react-native-picker/picker";
@@ -15,9 +8,13 @@ import { Picker } from "@react-native-picker/picker";
 // idea is to keep all this data local as it hardly changes
 // so can be replaced with requestData in future if required
 import { cardDetails } from "./utils/BankCardData";
-
-const windowWidth = Dimensions.get("window").width;
-const windowHeight = Dimensions.get("window").height;
+import {
+  windowWidth,
+  windowHeight,
+  chip_logo_uri,
+  nfc_logo_uri,
+  copyToClipboard
+} from "./utils/dataConfig";
 
 function getCardDetails(bank, cardType) {
   const bankData = cardDetails[bank] || cardDetails["default"];
@@ -31,10 +28,6 @@ const CardsScreen = () => {
   const [displayedCardDetails, setDisplayedCardDetails] = useState(
     getCardDetails(selectedbank, selectedCardtype)
   );
-  const chip_logo_uri =
-    "https://github.com/Ruthvik-1411/Finance_Tracker_app/blob/main/assets/card_assets/card_chip.png?raw=true";
-  const nfc_logo_uri =
-    "https://github.com/Ruthvik-1411/Finance_Tracker_app/blob/main/assets/card_assets/nfc_logo.png?raw=true";
 
   useEffect(() => {
     setDisplayedCardDetails(getCardDetails(selectedbank, selectedCardtype));
@@ -163,11 +156,19 @@ const CardsScreen = () => {
               buttonStyle={{
                 backgroundColor: "#040404",
                 borderRadius: 15,
-                // elevation: 5,
               }}
               containerStyle={{
                 width: 50,
               }}
+            />
+            <IconButton
+              icon="content-copy"
+              iconColor="#000000"
+              size={18}
+              onPress={() => {
+                copyToClipboard(displayedCardDetails.number), Alert.alert("Info", "Copied Card Number to Clipboard!");
+              }}
+              disabled={!showDetails}
             />
           </View>
         </Card>
@@ -297,6 +298,8 @@ const styles = StyleSheet.create({
   cardNumbercontainer: {
     alignItems: "center",
     marginTop: 2,
+    flexDirection: "row",
+    justifyContent: "center"
   },
   cardNumberText: {
     fontSize: 18,
