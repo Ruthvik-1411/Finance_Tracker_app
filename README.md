@@ -6,7 +6,7 @@
     BitWault
 </h1>
 <h3 align="center">
-    Personal Expense Tracker for Android <br> <a href="https://youtube.com/shorts/7yGje1RE26U">Video demo</a>
+    Personal Expense Tracker for Android <br> <a href="https://youtu.be/8o-5a1XjGV4">Video demo</a>
 </h3>
 
 BitWault is a simple finance tracker app, with the main purpose of monitoring and documenting expenses. The intial idea was to develop an application which allows the user to record the expenses they made. It was further expanded to include a screen to give some simple insights into monthly spending and trends over the past six months. Later, some more additions like tracking stock holdings of the user, credit card details and banking information such as UPI IDs etc. <br><br>
